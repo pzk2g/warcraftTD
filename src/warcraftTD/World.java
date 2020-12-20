@@ -1,9 +1,10 @@
 package warcraftTD;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.LinkedList;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class World {
@@ -34,7 +35,7 @@ public class World {
 	boolean end = false;
 	
 	//Chemin du plateau
-	ArrayList<Position> path;
+	Map<Position, Position> path; //position et la position suivante
 	
 	/**
 	 * Initialisation du monde en fonction de la largeur, la hauteur et le nombre de cases données
@@ -55,12 +56,16 @@ public class World {
 		spawn = new Position(startSquareX * squareWidth + squareWidth / 2, startSquareY * squareHeight + squareHeight / 2);
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
-		path = new ArrayList<Position>();
+		path = new TreeMap<Position, Position>(); 
 		
 		//initialise le chemin
-		int[][] chemin = {{3, 19}, {3, 15}, {15, 15}, {15, 5}, {19,5}, {19, 19}};
-		for (int[] p : chemin) {
-			path.add(new Position(p[0] * squareWidth + squareWidth / 2, p[1] * squareHeight + squareHeight / 2));
+		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
+		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
+		{15, 18}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {19, 19}};
+		for (int i=0; i<chemin.length-1; i++){
+			Position p = new Position(chemin[i][0] * squareWidth + squareWidth / 2, chemin[i][1] * squareHeight + squareHeight / 2);
+			Position nextP = new Position(chemin[i+1][0] * squareWidth + squareWidth / 2, chemin[i+1][1] * squareHeight + squareHeight / 2);
+			path.put(p, nextP);
 		}
 		System.out.println(path);
 	}
@@ -74,7 +79,7 @@ public class World {
 			 for (int j = 0; j < nbSquareY; j++)
 				 StdDraw.picture(i * squareWidth + squareWidth / 2, j * squareHeight + squareHeight / 2, "images/Grass.png", squareWidth, squareHeight);
 		 
-		 for (Position p: path) {
+		 for (Position p: path.keySet()) {
 			 StdDraw.picture(p.x, p.y, "images/GrassTop.png", squareWidth, squareHeight);
 		 }
 	 }
@@ -102,13 +107,13 @@ public class World {
 	 public void drawMouse() {
 		double normalizedX = (int)(StdDraw.mouseX() / squareWidth) * squareWidth + squareWidth / 2;
 		double normalizedY = (int)(StdDraw.mouseY() / squareHeight) * squareHeight + squareHeight / 2;
-		String image=null;
+		Position mouse = new Position(normalizedX, normalizedY);
 		switch (key) {
 		case 'a' :
-			StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTower.png", squareWidth, squareHeight);
+			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTower.png", squareWidth, squareHeight);
 			break;
 		case 'b' :
-			StdDraw.picture(normalizedX, normalizedY,  "images/BombTower.png", squareWidth, squareHeight);
+			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTower.png", squareWidth, squareHeight);
 			break;
 		case 'z' :
 			break;
@@ -126,8 +131,8 @@ public class World {
 		Monster m;
 		while (i.hasNext()) {
 			 m = i.next();
-			 int index = path.indexOf(m.p);
-			 if (index!=-1) m.nextP = path.get(index+1);
+			 Position nextP = path.get(m.p);
+			 if (nextP!=null) m.nextP = nextP;
 			 m.update(squareWidth, squareHeight);
 		 }
 	 }
@@ -194,13 +199,13 @@ public class World {
 	public void mouseClick(double x, double y) {
 		double normalizedX = (int)(x / squareWidth) * squareWidth + squareWidth / 2;
 		double normalizedY = (int)(y / squareHeight) * squareHeight + squareHeight / 2;
-		Position p = new Position(normalizedX, normalizedY);
+		Position mouse = new Position(normalizedX, normalizedY);
 		switch (key) {
 		case 'a':
-			towers.add(new ArcherTower(p));
+			if (!path.containsKey(mouse)) towers.add(new ArcherTower(mouse));
 			break;
 		case 'b':
-			towers.add(new BombTower(p));
+			if (!path.containsKey(mouse)) towers.add(new BombTower(mouse));
 			break;
 		case 'e':
 			System.out.println("Ici il est possible de faire évolué une des tours");
