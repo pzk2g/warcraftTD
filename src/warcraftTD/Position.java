@@ -34,13 +34,15 @@ public class Position implements Comparable<Position> {
 
 	@Override
 	public int compareTo(Position p) {
-			if (p.equals(this)) return 0;
-			else if (p.x<this.x) return -1;
-			else if (p.x==this.x){
-				if (p.y<this.y) return -1;
-				else return 1;
-			}
+		//les deux positions sont égales
+		if (p.equals(this)) return 0;
+		//arbitrairement 
+		else if (p.x<this.x) return -1;
+		else if (p.x==this.x){
+			if (p.y<this.y) return -1;
 			else return 1;
+		}
+		else return 1;
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class Position implements Comparable<Position> {
 		if (p==null) return false;
 		if (p instanceof Position) {
 			final Position p1 = (Position) p;
-			return this.equals(p1, 0.0001);
+			return this.equals(p1, 0.01);
 		}
 		return false;
 	}

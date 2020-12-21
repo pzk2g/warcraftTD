@@ -62,11 +62,17 @@ public class World {
 		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
 		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
 		{15, 18}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {19, 19}};
+//		int [][] chemin = {{3, 12}, {3, 11}, {3, 10}, {3, 9}, {3, 8}, {3, 7}, {4,7}, {5, 7}, 
+//				{6, 7}, {7, 7}, {7, 8}, {7, 9}, {8, 9}, {9, 9}, {10, 9}, {11, 9}, {12, 9},{12, 10}, {12, 11}, {12, 12}};
 		for (int i=0; i<chemin.length-1; i++){
 			Position p = new Position(chemin[i][0] * squareWidth + squareWidth / 2, chemin[i][1] * squareHeight + squareHeight / 2);
 			Position nextP = new Position(chemin[i+1][0] * squareWidth + squareWidth / 2, chemin[i+1][1] * squareHeight + squareHeight / 2);
 			path.put(p, nextP);
 		}
+		
+		int n = chemin.length-1;
+		Position p = new Position(chemin[n][0] * squareWidth + squareWidth / 2, chemin[n][1] * squareHeight + squareHeight / 2);
+		path.put(p, null);
 		System.out.println(path);
 	}
 	
@@ -80,7 +86,7 @@ public class World {
 				 StdDraw.picture(i * squareWidth + squareWidth / 2, j * squareHeight + squareHeight / 2, "images/Grass.png", squareWidth, squareHeight);
 		 
 		 for (Position p: path.keySet()) {
-			 StdDraw.picture(p.x, p.y, "images/GrassTop.png", squareWidth, squareHeight);
+			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
 		 }
 	 }
 	 
@@ -132,8 +138,20 @@ public class World {
 		while (i.hasNext()) {
 			 m = i.next();
 			 Position nextP = path.get(m.p);
-			 if (nextP!=null) m.nextP = nextP;
-			 m.update(squareWidth, squareHeight);
+			 if (path.containsKey(m.p)) {
+				 if (m.p.equals(m.nextP)) m.p = m.nextP;
+				 m.nextP = nextP;
+				 m.checkpoint++;
+				 if (m.nextP==null) {
+					 m.reached=true;
+				 }
+			 }
+			 if (!m.reached) m.update(squareWidth, squareHeight);
+			 else {
+				 monsters.remove(m);
+				 System.out.println("Monstre supprimé");
+			 }
+			 System.out.println(nextP);
 		 }
 	 }
 	 
