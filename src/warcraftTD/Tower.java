@@ -27,12 +27,14 @@ public abstract class Tower {
 	}
 	
 	/**
-	 * Lance un missile en direction du monster à la position p
-	 * @param p la position du monstre à attaquer
+	 * Lance un missile en direction du monster m
+	 * @param m le monstre pris en cible
 	 */
-	protected void attack(Position p, String chemin) {
+	protected void attack(Monster m, String chemin) {
 		StdDraw.picture(p.x, p.y, chemin);
 	}
+	
+	protected abstract boolean attackTo(Monster m);
 	
 	public void draw(double normalizedX, double normalizedY) {
 		StdDraw.picture(p.x, p.y, chemin, normalizedX, normalizedY);

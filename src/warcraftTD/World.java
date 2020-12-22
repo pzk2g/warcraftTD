@@ -79,8 +79,7 @@ public class World {
 	/**
 	 * Définit le décors du plateau de jeu.
 	 */
-	 public void drawBackground() {	
-		 StdDraw.setPenColor(StdDraw.LIGHT_GREEN);
+	 public void drawBackground() {
 		 for (int i = 0; i < nbSquareX; i++)
 			 for (int j = 0; j < nbSquareY; j++)
 				 StdDraw.picture(i * squareWidth + squareWidth / 2, j * squareHeight + squareHeight / 2, "images/Grass.png", squareWidth, squareHeight);
@@ -139,7 +138,6 @@ public class World {
 			 m = i.next();
 			 Position nextP = path.get(m.p);
 			 if (path.containsKey(m.p)) {
-				 if (m.p.equals(m.nextP)) m.p = m.nextP;
 				 m.nextP = nextP;
 				 m.checkpoint++;
 				 if (m.nextP==null) {
@@ -151,7 +149,6 @@ public class World {
 				 monsters.remove(m);
 				 System.out.println("Monstre supprimé");
 			 }
-			 System.out.println(nextP);
 		 }
 	 }
 	 
