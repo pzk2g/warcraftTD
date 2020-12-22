@@ -1,5 +1,10 @@
 package warcraftTD;
 
+import warcraftTD.monsters.BaseMonster;
+import warcraftTD.monsters.FlyingMonster;
+import warcraftTD.monsters.Monster;
+import warcraftTD.util.Position;
+
 public class Main {
 
 	public static void main(String[] args) {

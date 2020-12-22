@@ -1,14 +1,17 @@
-package warcraftTD;
+package warcraftTD.monsters;
+
+import warcraftTD.util.ImageMobile;
+import warcraftTD.util.Position;
 
 public abstract class Monster extends ImageMobile {
 	// Boolean pour savoir si le monstre à atteint le chateau du joueur
-	boolean reached;
+	public boolean reached;
 	// Compteur de déplacement pour savoir si le monstre à atteint le chateau du joueur
-	int checkpoint = 0;
+	public int checkpoint = 0;
 	//Recompense en or lorsque l'on tue le montre
-	int reward;
+	public int reward;
 	//Nombre de vies du monstre
-	int life;
+	public int life;
 	
 	
 	public Monster(String image, Position p, int life, double speed, int reward) {

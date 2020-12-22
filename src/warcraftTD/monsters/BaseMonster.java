@@ -1,4 +1,6 @@
-package warcraftTD;
+package warcraftTD.monsters;
+
+import warcraftTD.util.Position;
 
 public class BaseMonster extends Monster {
 	int niveau; //niveau du montre

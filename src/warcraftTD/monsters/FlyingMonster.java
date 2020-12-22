@@ -1,4 +1,6 @@
-package warcraftTD;
+package warcraftTD.monsters;
+
+import warcraftTD.util.Position;
 
 public class FlyingMonster extends Monster {
 	public FlyingMonster(Position p) {

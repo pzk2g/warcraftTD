@@ -3,8 +3,17 @@ package warcraftTD;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.LinkedList;
 
+import warcraftTD.missiles.Missiles;
+import warcraftTD.monsters.Monster;
+import warcraftTD.towers.ArcherTower;
+import warcraftTD.towers.BombTower;
+import warcraftTD.towers.Tower;
+import warcraftTD.util.Position;
+import warcraftTD.util.StdDraw;
+
+import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class World {
@@ -13,6 +22,9 @@ public class World {
 	
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
 	List<Tower> towers = new LinkedList <Tower>();
+
+	//l'ensemble des missiles, pour gerer (notamment) l'affichage
+	List<Missiles> missiles = new LinkedList<Missiles>();
 	
 	// Position par laquelle les monstres vont venir
 	Position spawn;
@@ -144,10 +156,11 @@ public class World {
 					 m.reached=true;
 				 }
 			 }
-			 if (!m.reached) m.update(squareWidth, squareHeight);
+			 if (!m.reached && m.life!=0) m.update(squareWidth, squareHeight);
 			 else {
+				 //suppression du monstre
 				 monsters.remove(m);
-				 System.out.println("Monstre supprimé");
+				 life--;
 			 }
 		 }
 	 }
@@ -161,8 +174,23 @@ public class World {
 		 Tower t;
 		 while (i.hasNext()) {
 			 t = i.next();
+			 //cherche un monstre qui est dans sa zone de tir
+			 ArrayList<Monster> lmonsters = new ArrayList<Monster>(monsters);
+			 int index = 0;
+			 boolean find = false;
+			 Missiles missile=null;
+			 while (index!=lmonsters.size() && !find){
+				 missile = t.attack(lmonsters.get(index));
+				 if (missile!=null) find=true;
+				 index++;
+			 }
+			 if (missile!=null) missiles.add(missile);
 			 t.update(squareWidth, squareHeight);
 		 }
+	 }
+
+	 public void updateMissiles(){
+
 	 }
 	 
 	 /**
@@ -257,7 +285,8 @@ public class World {
 				mouseClick(StdDraw.mouseX(), StdDraw.mouseY());
 				StdDraw.pause(50);
 			}
-			
+			//TODO: generer des monstres
+
 			update();
 			StdDraw.show();
 			StdDraw.pause(20);			

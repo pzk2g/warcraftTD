@@ -1,10 +1,10 @@
-package warcraftTD;
+package warcraftTD.util;
 
 abstract public class ImageMobile {
-	Position p;
-	Position nextP;
-	String image;
-	double speed;
+	public Position p;
+	public Position nextP;
+	public String image;
+	public double speed;
 	
 	public ImageMobile(String image, Position p,  Position nextP, double speed) {
 		this.p = p;
@@ -27,7 +27,7 @@ abstract public class ImageMobile {
 			double px = ratioX * speed + p.x;
 			double py = ratioY * speed + p.y;
 			
-			//condition pour voir si on a dépassé nextP
+			//conditions pour voir si on a dépassé nextP
 			if (dx>0 && px>nextP.x) px = nextP.x;
 			if (dy>0 && py>nextP.y) py = nextP.y;
 			if (dx<0 && px<nextP.x) px = nextP.x;
