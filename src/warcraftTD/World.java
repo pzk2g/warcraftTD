@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 public class World {
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
-	List<Monster> monsters = new LinkedList<Monster>();
+	LinkedList<Monster> monsters = new LinkedList<Monster>(); //List --> Linked!list
 	
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
 	List<Tower> towers = new LinkedList <Tower>();
@@ -144,7 +144,9 @@ public class World {
 	  * Modifie la position du monstre au cours du temps à l'aide du paramètre nextP.
 	  */
 	 public void updateMonsters() {
-		Iterator<Monster> i = monsters.iterator();
+		List<LinkedList<Monster>> v = vague();
+		for(LinkedList<Monster> listMonsters : v ) {
+		Iterator<Monster> i = listMonsters.iterator();
 		Monster m;
 		while (i.hasNext()) {
 			 m = i.next();
@@ -163,7 +165,21 @@ public class World {
 				 life--;
 			 }
 		 }
+		 //pas eu l'effet recherché
+		 try {
+            		Thread.sleep(5000);
+        	}
+        		catch (InterruptedException e) {
+           		System.out.println("Error sleeping");
+       		}
+	 	}
 	 }
+	//s'est avéré pas concluant :-(
+	 public List<LinkedList<Monster>> vague(){
+		 List<LinkedList<Monster>> v = new LinkedList<LinkedList<Monster>>();
+		 v.add(monsters);
+		 return v;
+	 } 
 	 
 	 
 	 /**
@@ -286,7 +302,7 @@ public class World {
 				StdDraw.pause(50);
 			}
 			//TODO: generer des monstres
-
+			
 			update();
 			StdDraw.show();
 			StdDraw.pause(20);			
