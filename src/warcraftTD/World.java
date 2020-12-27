@@ -82,7 +82,7 @@ public class World {
 		StdDraw.enableDoubleBuffering();
 		path = new TreeMap<Position, Position>(); 
 		
-		//TODO : trouver une méthode pour générer des chemins... (dans la classe Niveau qui initialisera le niveau que l'on est en train de faire)
+		//TODO : trouver une méthode pour générer des chemins...
 		//initialise le chemin
 //		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
 //		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
