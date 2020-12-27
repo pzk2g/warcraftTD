@@ -7,20 +7,28 @@ import warcraftTD.util.StdDraw;
 
 public abstract class Tower {
 	//position du tour à l'instant t
-	Position p;
+	public Position p;
 	//vitesse d'attaque de la tour
-	int speed;
+	public int speed;
 	//portée de l'attaque de la tour
-	double reach;
+	public double reach;
 	//prix de contruction d'une tour
-	int price;
+	public int price;
 	//vitesse des projectiles
-	double speedMissile;
+	public double speedMissile;
 	//chemins des tours à afficher
 	String image;
 	//temps de rechargement des projectiles
 	protected long time;
 	
+	/**
+	 * Classe abstraite qui permet de gérer les différentes types de tours 
+	 * @param p la Position de la tour
+	 * @param chemin l'url de l'image de la tour
+	 * @param speed la vitesse de rechargement de la tour
+	 * @param price le prix de production de la tour
+	 * @param reach la distance de visée de la tour
+	 */
 	public Tower(Position p, String chemin, int speed, int price, double reach) {
 		this.p = p;
 		this.speed = speed;
@@ -30,6 +38,11 @@ public abstract class Tower {
 		this.time = System.currentTimeMillis();
 	}
 	
+	/**
+	 * Dessine une image de la tour dans le cadrillage
+	 * @param normalizedX la taille en largeur d'un carré du cadrillage
+	 * @param normalizedY la taille en longeur d'un carré du cadrillage
+	 */
 	public void update(double normalizedX, double normalizedY) {
 		draw(normalizedX, normalizedY);
 	}
@@ -42,5 +55,19 @@ public abstract class Tower {
 	
 	public void draw(double normalizedX, double normalizedY) {
 		StdDraw.picture(p.x, p.y, image, normalizedX, normalizedY);
+	}
+	
+	/**
+	 * Indique si la tour est améliorable ou non
+	 * @return vrai si la tour est améliorable
+	 */
+	public boolean isReachtable() {
+		return reach==3;
+	}
+	
+	//TODO: mettre la méthode abstraite et la redéfinir pour les deux classes filles
+	// et faire la javadoc
+	public void reaching() {
+		
 	}
 }

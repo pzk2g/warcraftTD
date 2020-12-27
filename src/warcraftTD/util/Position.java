@@ -14,10 +14,6 @@ public class Position implements Comparable<Position> {
 		this.y = y;
 	}
 	
-	public Position(Position p) {
-		x = p.x;
-		y = p.y;
-	}
 	
 	/**
 	 * Mesure la distance euclidienne entre 2 positions.
@@ -29,6 +25,13 @@ public class Position implements Comparable<Position> {
 	}
 	
 	
+	/**
+	 * Indique si la position est dans un carré de taille deux epsilons autour de p 
+	 * @param p une position
+	 * @param epsilon un réel strictement positif
+	 * @return vrai si et seulement si p est dans un carré de taille deux epsilons autour
+	 * de p.
+	 */
 	public boolean equals(Position p, double epsilon) {
 		return this.x-epsilon<= p.x &&  p.x <=this.x+epsilon && this.y-epsilon<=p.y && p.y<=this.y+epsilon;
 	}
@@ -56,9 +59,6 @@ public class Position implements Comparable<Position> {
 		return false;
 	}
 	
-	/**
-	 * Retourne la position du point sur l'axe des x et des y
-	 */
 	@Override
 	public String toString() {
 		return "(" + Double.toString(x) + "," + Double.toString(y) + ")";

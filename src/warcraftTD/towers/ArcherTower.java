@@ -6,6 +6,10 @@ import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
 public class ArcherTower extends Tower {
+	/**
+	 * Classe qui gère les tours d'archers
+	 * @param p la position de la tour
+	 */
 	public ArcherTower(Position p) {
 		super(p, "images/ArcherTower.png", 15, 50, 0.2);
 	}

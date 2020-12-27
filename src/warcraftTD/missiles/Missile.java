@@ -5,9 +5,7 @@ import warcraftTD.util.ImageMobile;
 import warcraftTD.util.Position;
 import warcraftTD.util.StdDraw;
 
-/*
- * Classe qui permettra de gérer les projectiles
- */
+
 public abstract class Missile extends ImageMobile{
 	//cible visée par le projectil
 	public Monster target;
@@ -15,12 +13,21 @@ public abstract class Missile extends ImageMobile{
 	public int damage;
 	
 	
+	/**
+	 * Classe abstraite qui permet de gérer les projectiles
+	 * @param p la position du projectile
+	 * @param target le monstre visé par le projectile
+	 * @param speed la vitesse du projectile
+	 * @param image le chemin du projectile
+	 * @param damage les dommages infligée par le projectile
+	 */
 	public Missile(Position p, Monster target, double speed, String image, int damage) {
 		super(image, p, target.p, speed);
 		this.target = target;
 		this.damage = damage;
 	}
 
+	
 	@Override
 	public void draw(double normalizedX, double normalizedY){
 		double angle = super.calculateAngle(this.p, this.nextP);
@@ -28,7 +35,9 @@ public abstract class Missile extends ImageMobile{
 	}
 	
 	
-	
+	/**
+	 * Enlève des points de vies au monstre touché
+	 */
 	public void hit() {
 		int life = this.target.life - this.damage;
 		this.target.life = (life<0)?0:life;

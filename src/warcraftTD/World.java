@@ -3,6 +3,7 @@ package warcraftTD;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
@@ -81,6 +82,7 @@ public class World {
 		StdDraw.enableDoubleBuffering();
 		path = new TreeMap<Position, Position>(); 
 		
+		//TODO : trouver une méthode pour générer des chemins... (dans la classe Niveau qui initialisera le niveau que l'on est en train de faire)
 		//initialise le chemin
 //		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
 //		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
@@ -115,7 +117,7 @@ public class World {
 	  * Initialise le chemin sur la position du point de départ des monstres. Cette fonction permet d'afficher une route qui sera différente du décor.
 	  */
 	 public void drawPath() {
-		 Position p = new Position(spawn);
+		 Position p = spawn.clone();
 		 StdDraw.setPenColor(StdDraw.YELLOW);
 		 StdDraw.filledRectangle(p.x, p.y, squareWidth / 2, squareHeight / 2);
 	 }
@@ -151,11 +153,15 @@ public class World {
 		case 'b' :
 			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTower.png", squareWidth, squareHeight);
 			break;
-		case 'z' :
+		case 'e': 
+			StdDraw.picture(StdDraw.mouseX(), StdDraw.mouseY(), "images/up.png");
+			//TODO : mettre des flèches pour indiquer au joueur quels sont les tours qui peuvent être mises à jour
+			break;
+		case 'z' : //on désélectionne
+			break;
+		case 'r': //TODO : à finir
 			break;
 		}
-//		if (image != null)
-//			StdDraw.picture(normalizedX, normalizedY,  image, squareWidth, squareHeight);
 	 }
 		 
 	 /**
@@ -170,7 +176,6 @@ public class World {
 			 Position nextP = path.get(m.p);
 			 if (path.containsKey(m.p)) {
 				 m.nextP = nextP;
-				 m.checkpoint++;
 				 if (m.nextP==null) {
 					 m.reached=true;
 				 }
@@ -208,7 +213,10 @@ public class World {
 			 t.update(squareWidth, squareHeight);
 		 }
 	 }
-
+	 
+	 /*
+	  * Met à jour les projectiles : les faits avancer et les détruits si besoin
+	  */
 	 public void updateMissiles(){
 		 Iterator<Missile> i = missiles.iterator();
 		 Missile msl;
@@ -234,21 +242,17 @@ public class World {
 		updateMonsters();
 		updateTowers();
 		updateMissiles();
-		if (alertMessage) drawAlertMessage();
 		drawMouse();
 		return life;
 	 }
-	 
-	private void drawAlertMessage() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/**
 	 * Récupère la touche appuyée par l'utilisateur et affiche les informations pour la touche séléctionnée
 	 * @param key la touche utilisée par le joueur
 	 */
 	public void keyPress(char key) {
+		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
+		//pour notamment supprimer les print dans la console
 		key = Character.toLowerCase(key);
 		this.key = key;
 		switch (key) {
@@ -260,6 +264,9 @@ public class World {
 			break;
 		case 'e':
 			System.out.println("Evolution selected (40g).");
+			break;
+		case 'r':
+			System.out.println("Reach selected");
 			break;
 		case 's':
 			System.out.println("Starting game!");
@@ -280,28 +287,29 @@ public class World {
 		double normalizedX = (int)(x / squareWidth) * squareWidth + squareWidth / 2;
 		double normalizedY = (int)(y / squareHeight) * squareHeight + squareHeight / 2;
 		Position mouse = new Position(normalizedX, normalizedY);
+		
+		//Set des positions où l'on ne peut pas construire de tours
+		TreeSet<Position> positions = new TreeSet<Position>();
+		for (Tower t : towers) {
+			positions.add(t.p);
+		}
+		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
+		//pour notamment supprimer les print dans la console
 		switch (key) {
 		case 'a':
-			//TODO : problèmes, possibilité de construire plusieurs tours au même endroit !
-			if (!path.containsKey(mouse)) {
+			if (!path.containsKey(mouse) && !positions.contains(mouse)) {
 				if (this.money>=50) {
 					towers.add(new ArcherTower(mouse));
 					this.money-=50;
 				}
 				else System.out.println("Vous n'avez pas assez d'or !");
-//				else {
-//					double px = normalizedX;
-//					double py = normalizedY+squareWidth>=1? normalizedY-squareWidth: normalizedY+squareWidth;
-//					StdDraw.setPenColor(StdDraw.RED);
-//					StdDraw.text(px, py, "Attention vous n'avez pas assez d'argent !");
-//					StdDraw.pause(100);
-//				}
 			}
 			break;
 		case 'b':
-			if (!path.containsKey(mouse)) {
+			if (!path.containsKey(mouse) && !positions.contains(mouse)) {
 				if (this.money>=60) {
 					towers.add(new BombTower(mouse));
+					this.money-=60;
 				}
 				else System.out.println("Vous n'avez pas assez d'or !");
 				
@@ -310,6 +318,8 @@ public class World {
 		case 'e':
 			System.out.println("Ici il est possible de faire évolué une des tours");
 			break;
+		case 'r':
+			System.out.println("Ici, on voit le rayon de visé d'une tour");
 		}
 	}
 	
@@ -318,11 +328,14 @@ public class World {
 	 * offertes au joueur pour intéragir avec le clavier
 	 */
 	public void printCommands() {
+		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
+		//pour notamment supprimer les print dans la console
 		System.out.println("Press A to select Arrow Tower (cost 50g).");
 		System.out.println("Press B to select Cannon Tower (cost 60g).");
 		System.out.println("Press E to update a tower (cost 40g).");
 		System.out.println("Click on the grass to build it.");
 		System.out.println("Press Z to cancel a selection");
+		System.out.println("Press R to see the reach of a tower");
 		System.out.println("Press S to start.");
 	}
 	
@@ -335,6 +348,8 @@ public class World {
 			
 			StdDraw.clear();
 			if (StdDraw.hasNextKeyTyped()) {
+				System.out.println();
+				printCommands();
 				keyPress(StdDraw.nextKeyTyped());
 			}
 			
@@ -344,7 +359,7 @@ public class World {
 			}
 			//TODO: generer des monstres
 
-			end = update()==0;
+			end = update()==0 || key=='q';
 			StdDraw.show();
 			StdDraw.pause(20);
 		}

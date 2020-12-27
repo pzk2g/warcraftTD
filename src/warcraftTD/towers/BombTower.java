@@ -7,6 +7,10 @@ import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
 public class BombTower extends Tower{
+	/**
+	 * Classe des tours de Bombes
+	 * @param p la position de la tour
+	 */
 	public BombTower(Position p) {
 		super(p, "images/BombTower.png", 20, 60, 0.15);
 	}

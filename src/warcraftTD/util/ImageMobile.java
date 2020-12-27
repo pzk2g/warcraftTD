@@ -1,11 +1,23 @@
 package warcraftTD.util;
 
 abstract public class ImageMobile {
+	//la position de l'image
 	public Position p;
+	//la position suivante (temporellement)  de l'image
 	public Position nextP;
+	//le chemin de l'image
 	public String image;
+	//vitesse de déplacement de l'image
 	public double speed;
 	
+	
+	/**
+	 * Classe qui va permettre de gérer les images mobiles (comme les monstres, les projectiles)
+	 * @param image url de l'image
+	 * @param p la position de l'image
+	 * @param nextP la position suivante (temporellement) de l'image 
+	 * @param speed la vitesse de déplacement de l'image
+	 */
 	public ImageMobile(String image, Position p,  Position nextP, double speed) {
 		this.p = p;
 		this.image = image;
@@ -37,6 +49,11 @@ abstract public class ImageMobile {
 		}	
 	}
 	
+	/**
+	 * Dessine une image dans le canevas à échelle des autres images
+	 * @param normalizedX l'échelle des x
+	 * @param normalizedY l'échelle des y
+	 */
 	public void update(double normalizedX, double normalizedY) {
 		move();
 		draw(normalizedX, normalizedY);
@@ -55,7 +72,7 @@ abstract public class ImageMobile {
 	 * @param pInit la position initiale
 	 * @param pFinal la position finale
 	 * @return l'angle entre la droite passant par pInit et pFinal et entre l'axe des
-	 * abscisses
+	 * abscisses.
 	 */
 	public static double calculateAngle(Position pInit, Position pFinal) {
 		double dx = pFinal.x - pInit.x;
@@ -69,6 +86,11 @@ abstract public class ImageMobile {
 		return angle;
 	}
 	
+	/**
+	 * Calcul l'angle du mouvement de l'image en fonction de l'axe des abscisses
+	 * @return l'angle entre la droite passant par this.p et this.pNext et entre
+	 * l'axe des abscisses.
+	 */
 	public double calculateAngle() {
 		return calculateAngle(this.p, this.nextP);
 	}
