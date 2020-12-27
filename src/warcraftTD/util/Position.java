@@ -62,5 +62,12 @@ public class Position implements Comparable<Position> {
 	public String toString() {
 		return "(" + Double.toString(x) + "," + Double.toString(y) + ")";
 	}
+	
+	@Override
+	public Position clone() {
+		double px = this.x;
+		double py = this.y;
+		return new Position(px, py);
+	}
 
 }

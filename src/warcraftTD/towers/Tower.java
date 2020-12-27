@@ -1,6 +1,6 @@
 package warcraftTD.towers;
 
-import warcraftTD.missiles.Missiles;
+import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 import warcraftTD.util.StdDraw;
@@ -18,6 +18,8 @@ public abstract class Tower {
 	double speedMissile;
 	//chemins des tours à afficher
 	String image;
+	//
+	protected long temps;
 	
 	public Tower(Position p, String chemin, int speed, int price, double reach) {
 		this.p = p;
@@ -25,6 +27,7 @@ public abstract class Tower {
 		this.price = price;
 		this.image = chemin;
 		this.reach = reach;
+		this.temps = System.currentTimeMillis();
 	}
 	
 	public void update(double normalizedX, double normalizedY) {
@@ -35,7 +38,7 @@ public abstract class Tower {
 	 * Lance un projectile en direction du monster m
 	 * @param m le monstre pris en cible
 	 */
-	public abstract Missiles attack(Monster m);
+	public abstract Missile attack(Monster m);
 	
 	public void draw(double normalizedX, double normalizedY) {
 		StdDraw.picture(p.x, p.y, image, normalizedX, normalizedY);

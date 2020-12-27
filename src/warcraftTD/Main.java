@@ -10,10 +10,10 @@ public class Main {
 	public static void main(String[] args) {
 		int width = 1200;
 		int height = 800;
-		int nbSquareX = 20;
-		int nbSquareY = 20;
+		int nbSquareX = 13;
+		int nbSquareY = 13;
 		int startX = 3;
-		int startY = 19;
+		int startY = 12;
 		
 		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY);
 		

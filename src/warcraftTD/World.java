@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import warcraftTD.missiles.Missiles;
+import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
 import warcraftTD.towers.ArcherTower;
 import warcraftTD.towers.BombTower;
@@ -24,7 +24,7 @@ public class World {
 	List<Tower> towers = new LinkedList <Tower>();
 
 	//l'ensemble des missiles, pour gerer (notamment) l'affichage
-	List<Missiles> missiles = new LinkedList<Missiles>();
+	List<Missile> missiles = new LinkedList<Missile>();
 	
 	// Position par laquelle les monstres vont venir
 	Position spawn;
@@ -40,6 +40,9 @@ public class World {
 	// Nombre de points de vie du joueur
 	int life = 20;
 	
+	//Nombre d'argent du joueur
+	int money = 0;
+	
 	// Commande sur laquelle le joueur appuie (sur le clavier)
 	char key;
 	
@@ -48,6 +51,7 @@ public class World {
 	
 	//Chemin du plateau
 	Map<Position, Position> path; //position et la position suivante
+	
 	
 	/**
 	 * Initialisation du monde en fonction de la largeur, la hauteur et le nombre de cases données
@@ -71,11 +75,11 @@ public class World {
 		path = new TreeMap<Position, Position>(); 
 		
 		//initialise le chemin
-		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
-		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
-		{15, 18}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {19, 19}};
-//		int [][] chemin = {{3, 12}, {3, 11}, {3, 10}, {3, 9}, {3, 8}, {3, 7}, {4,7}, {5, 7}, 
-//				{6, 7}, {7, 7}, {7, 8}, {7, 9}, {8, 9}, {9, 9}, {10, 9}, {11, 9}, {12, 9},{12, 10}, {12, 11}, {12, 12}};
+//		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
+//		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
+//		{15, 18}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {19, 19}};
+		int [][] chemin = {{3, 12}, {3, 11}, {3, 10}, {3, 9}, {3, 8}, {3, 7}, {4,7}, {5, 7}, 
+				{6, 7}, {7, 7}, {7, 8}, {7, 9}, {8, 9}, {9, 9}, {10, 9}, {11, 9}, {12, 9},{12, 10}, {12, 11}, {12, 12}};
 		for (int i=0; i<chemin.length-1; i++){
 			Position p = new Position(chemin[i][0] * squareWidth + squareWidth / 2, chemin[i][1] * squareHeight + squareHeight / 2);
 			Position nextP = new Position(chemin[i+1][0] * squareWidth + squareWidth / 2, chemin[i+1][1] * squareHeight + squareHeight / 2);
@@ -159,7 +163,8 @@ public class World {
 			 if (!m.reached && m.life!=0) m.update(squareWidth, squareHeight);
 			 else {
 				 //suppression du monstre
-				 monsters.remove(m);
+				 if (m.life==0) this.money+=m.reward;
+				 i.remove();
 				 life--;
 			 }
 		 }
@@ -178,7 +183,7 @@ public class World {
 			 ArrayList<Monster> lmonsters = new ArrayList<Monster>(monsters);
 			 int index = 0;
 			 boolean find = false;
-			 Missiles missile=null;
+			 Missile missile=null;
 			 while (index!=lmonsters.size() && !find){
 				 missile = t.attack(lmonsters.get(index));
 				 if (missile!=null) find=true;
@@ -190,7 +195,17 @@ public class World {
 	 }
 
 	 public void updateMissiles(){
-
+		 Iterator<Missile> i = missiles.iterator();
+		 Missile msl;
+		 while (i.hasNext()) {
+			 msl = i.next();
+			 //TODO : à modifier, ne rentre pas dans la condition
+			 if (msl.p.equals(msl.target.p, 0.01)) {
+				 msl.hit();
+				 i.remove();
+			 }
+			 else msl.update(squareWidth, squareHeight);
+		 }
 	 }
 	 
 	 /**
@@ -203,6 +218,7 @@ public class World {
 		drawInfos();
 		updateMonsters();
 		updateTowers();
+		updateMissiles();
 		drawMouse();
 		return life;
 	 }
@@ -287,9 +303,9 @@ public class World {
 			}
 			//TODO: generer des monstres
 
-			update();
+			end = update()==0;
 			StdDraw.show();
-			StdDraw.pause(20);			
+			StdDraw.pause(20);
 		}
 	}
 }
