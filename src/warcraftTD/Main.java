@@ -8,7 +8,6 @@ import warcraftTD.util.Position;
 public class Main {
 
 	public static void main(String[] args) {
-		//TODO : mettre tous ces paramètres dans la classe Niveau !
 		int width = 1200;
 		int height = 800;
 		int nbSquareX = 13;
