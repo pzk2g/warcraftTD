@@ -11,18 +11,27 @@ public class ArcherTower extends Tower {
 	 * @param p la position de la tour
 	 */
 	public ArcherTower(Position p) {
-		super(p, "images/ArcherTower.png", 15, 50, 0.2);
+		super(p, String.format("images/ArcherTowerLevel%d.png", 1), 15, 50, 0.2);
 	}
 	
 	@Override
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
-		if (tps-this.time>this.speed*100) {
+		if (tps-this.time>this.speed) {
 			this.time = tps;
 			if (m.p.dist(this.p)<=super.reach){
 				return new Arrow(super.p.clone(), m);
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void updating() {
+		System.out.println("Mise à jour de la tour ");
+		this.level++;
+		this.image = String.format("images/ArcherTowerLevel%d.png", this.level);
+		this.speed -=2*10;
+		this.reach += 0.005;
 	}
 }

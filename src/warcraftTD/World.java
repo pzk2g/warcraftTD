@@ -3,7 +3,6 @@ package warcraftTD;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
@@ -148,14 +147,18 @@ public class World {
 		Position mouse = new Position(normalizedX, normalizedY);
 		switch (key) {
 		case 'a' :
-			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTower.png", squareWidth, squareHeight);
+			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
 			break;
 		case 'b' :
-			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTower.png", squareWidth, squareHeight);
+			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
 			break;
 		case 'e': 
-			StdDraw.picture(StdDraw.mouseX(), StdDraw.mouseY(), "images/up.png");
-			//TODO : mettre des flèches pour indiquer au joueur quels sont les tours qui peuvent être mises à jour
+			//indique par une flèche les tours qui peuvent être évoluées
+			for (Tower t: towers) {
+				if (t.isUpdatable()) {
+					StdDraw.picture(t.p.x, t.p.y, "images/up.png");
+				}
+			}
 			break;
 		case 'z' : //on désélectionne
 			break;
@@ -289,15 +292,15 @@ public class World {
 		Position mouse = new Position(normalizedX, normalizedY);
 		
 		//Set des positions où l'on ne peut pas construire de tours
-		TreeSet<Position> positions = new TreeSet<Position>();
+		TreeMap<Position, Tower> positions = new TreeMap<Position, Tower>();
 		for (Tower t : towers) {
-			positions.add(t.p);
+			positions.put(t.p, t);
 		}
 		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
 		//pour notamment supprimer les print dans la console
 		switch (key) {
 		case 'a':
-			if (!path.containsKey(mouse) && !positions.contains(mouse)) {
+			if (!path.containsKey(mouse) && !positions.containsKey(mouse)) {
 				if (this.money>=50) {
 					towers.add(new ArcherTower(mouse));
 					this.money-=50;
@@ -306,7 +309,7 @@ public class World {
 			}
 			break;
 		case 'b':
-			if (!path.containsKey(mouse) && !positions.contains(mouse)) {
+			if (!path.containsKey(mouse) && !positions.containsKey(mouse)) {
 				if (this.money>=60) {
 					towers.add(new BombTower(mouse));
 					this.money-=60;
@@ -316,7 +319,14 @@ public class World {
 			}
 			break;
 		case 'e':
-			System.out.println("Ici il est possible de faire évolué une des tours");
+			if (positions.containsKey(mouse)) {
+				//on appuie sur une tour
+				Tower t = positions.get(mouse);
+				if (t.isUpdatable()) {
+					t.updating();
+				}
+				else System.out.println("La tour ne peut pas être mise à jour !");
+			}
 			break;
 		case 'r':
 			System.out.println("Ici, on voit le rayon de visé d'une tour");
@@ -344,12 +354,10 @@ public class World {
 	 */
 	public void run() {
 		printCommands();
-		while(!end) {
-			
+		while(!end) {	
 			StdDraw.clear();
 			if (StdDraw.hasNextKeyTyped()) {
 				System.out.println();
-				printCommands();
 				keyPress(StdDraw.nextKeyTyped());
 			}
 			

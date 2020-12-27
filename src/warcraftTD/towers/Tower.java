@@ -20,7 +20,8 @@ public abstract class Tower {
 	String image;
 	//temps de rechargement des projectiles
 	protected long time;
-	
+	//niveau de la tour
+	int level;
 	/**
 	 * Classe abstraite qui permet de gérer les différentes types de tours 
 	 * @param p la Position de la tour
@@ -31,11 +32,12 @@ public abstract class Tower {
 	 */
 	public Tower(Position p, String chemin, int speed, int price, double reach) {
 		this.p = p;
-		this.speed = speed;
+		this.speed = speed*10;
 		this.price = price;
 		this.image = chemin;
 		this.reach = reach;
 		this.time = System.currentTimeMillis();
+		this.level = 1;
 	}
 	
 	/**
@@ -61,13 +63,13 @@ public abstract class Tower {
 	 * Indique si la tour est améliorable ou non
 	 * @return vrai si la tour est améliorable
 	 */
-	public boolean isReachtable() {
-		return reach==3;
+	public boolean isUpdatable() {
+		return level<3;
 	}
 	
 	//TODO: mettre la méthode abstraite et la redéfinir pour les deux classes filles
 	// et faire la javadoc
-	public void reaching() {
+	public void updating() {
 		
 	}
 }
