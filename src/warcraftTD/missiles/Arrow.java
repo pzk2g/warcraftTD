@@ -4,8 +4,8 @@ import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
 public class Arrow extends Missile {
-    public Arrow(Position p, Monster target, int damage){
-        super(p, target,  0.04, "images/Arrow.png", damage);
+    public Arrow(Position p, Monster target){
+        super(p, target,  0.04, "images/Arrow.png", 2);
     }
 }
 

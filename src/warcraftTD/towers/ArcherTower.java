@@ -10,12 +10,13 @@ public class ArcherTower extends Tower {
 		super(p, "images/ArcherTower.png", 15, 50, 0.2);
 	}
 	
+	@Override
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
-		if (tps-this.temps>this.speed*100) {
-			this.temps = tps;
+		if (tps-this.time>this.speed*100) {
+			this.time = tps;
 			if (m.p.dist(this.p)<=super.reach){
-				return new Arrow(super.p.clone(), m, 3);
+				return new Arrow(super.p.clone(), m);
 			}
 		}
 		return null;

@@ -15,6 +15,9 @@ import warcraftTD.util.StdDraw;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.awt.Font; 
+
+
 
 public class World {
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
@@ -41,7 +44,7 @@ public class World {
 	int life = 20;
 	
 	//Nombre d'argent du joueur
-	int money = 0;
+	int money = 100;
 	
 	// Commande sur laquelle le joueur appuie (sur le clavier)
 	char key;
@@ -51,6 +54,10 @@ public class World {
 	
 	//Chemin du plateau
 	Map<Position, Position> path; //position et la position suivante
+	
+	//Message d'alerte
+	boolean alertMessage = false;
+	String textAlertMessage;
 	
 	
 	/**
@@ -89,7 +96,6 @@ public class World {
 		int n = chemin.length-1;
 		Position p = new Position(chemin[n][0] * squareWidth + squareWidth / 2, chemin[n][1] * squareHeight + squareHeight / 2);
 		path.put(p, null);
-		System.out.println(path);
 	}
 	
 	/**
@@ -118,7 +124,16 @@ public class World {
 	  * Affiche certaines informations sur l'écran telles que les points de vie du joueur ou son or
 	  */
 	 public void drawInfos() {
+		 //Configuration de la police
+		 StdDraw.setFont(new Font("TimesNewRoman", Font.BOLD, 20));
 		 StdDraw.setPenColor(StdDraw.BLACK);
+		 //Affichage de l'argent :
+		 StdDraw.setPenRadius(0.01);
+		 StdDraw.picture(0.03, 0.97, "images/gold.png");
+		 StdDraw.text(0.07, 0.97, Integer.toString(money));
+		 //Affichage des vies
+		 StdDraw.picture(0.03, 0.92, "images/heart.png");
+		 StdDraw.text(0.07, 0.92, Integer.toString(life));
 	 }
 	 
 	 /**
@@ -219,10 +234,16 @@ public class World {
 		updateMonsters();
 		updateTowers();
 		updateMissiles();
+		if (alertMessage) drawAlertMessage();
 		drawMouse();
 		return life;
 	 }
 	 
+	private void drawAlertMessage() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Récupère la touche appuyée par l'utilisateur et affiche les informations pour la touche séléctionnée
 	 * @param key la touche utilisée par le joueur
@@ -261,10 +282,30 @@ public class World {
 		Position mouse = new Position(normalizedX, normalizedY);
 		switch (key) {
 		case 'a':
-			if (!path.containsKey(mouse)) towers.add(new ArcherTower(mouse));
+			//TODO : problèmes, possibilité de construire plusieurs tours au même endroit !
+			if (!path.containsKey(mouse)) {
+				if (this.money>=50) {
+					towers.add(new ArcherTower(mouse));
+					this.money-=50;
+				}
+				else System.out.println("Vous n'avez pas assez d'or !");
+//				else {
+//					double px = normalizedX;
+//					double py = normalizedY+squareWidth>=1? normalizedY-squareWidth: normalizedY+squareWidth;
+//					StdDraw.setPenColor(StdDraw.RED);
+//					StdDraw.text(px, py, "Attention vous n'avez pas assez d'argent !");
+//					StdDraw.pause(100);
+//				}
+			}
 			break;
 		case 'b':
-			if (!path.containsKey(mouse)) towers.add(new BombTower(mouse));
+			if (!path.containsKey(mouse)) {
+				if (this.money>=60) {
+					towers.add(new BombTower(mouse));
+				}
+				else System.out.println("Vous n'avez pas assez d'or !");
+				
+			}
 			break;
 		case 'e':
 			System.out.println("Ici il est possible de faire évolué une des tours");
@@ -280,8 +321,8 @@ public class World {
 		System.out.println("Press A to select Arrow Tower (cost 50g).");
 		System.out.println("Press B to select Cannon Tower (cost 60g).");
 		System.out.println("Press E to update a tower (cost 40g).");
-		System.out.println("Press Z to cancel a selection");
 		System.out.println("Click on the grass to build it.");
+		System.out.println("Press Z to cancel a selection");
 		System.out.println("Press S to start.");
 	}
 	

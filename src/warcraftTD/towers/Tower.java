@@ -18,8 +18,8 @@ public abstract class Tower {
 	double speedMissile;
 	//chemins des tours à afficher
 	String image;
-	//
-	protected long temps;
+	//temps de rechargement des projectiles
+	protected long time;
 	
 	public Tower(Position p, String chemin, int speed, int price, double reach) {
 		this.p = p;
@@ -27,7 +27,7 @@ public abstract class Tower {
 		this.price = price;
 		this.image = chemin;
 		this.reach = reach;
-		this.temps = System.currentTimeMillis();
+		this.time = System.currentTimeMillis();
 	}
 	
 	public void update(double normalizedX, double normalizedY) {

@@ -28,6 +28,7 @@ public class Position implements Comparable<Position> {
 		return Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2));
 	}
 	
+	
 	public boolean equals(Position p, double epsilon) {
 		return this.x-epsilon<= p.x &&  p.x <=this.x+epsilon && this.y-epsilon<=p.y && p.y<=this.y+epsilon;
 	}
