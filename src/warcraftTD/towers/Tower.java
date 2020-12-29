@@ -21,7 +21,10 @@ public abstract class Tower {
 	//temps de rechargement des projectiles
 	protected long time;
 	//niveau de la tour
-	int level;
+	public int level;
+	//prix amélioration d'une tour
+	public final static int UPDATEPRICE = 30;
+
 	/**
 	 * Classe abstraite qui permet de gérer les différentes types de tours 
 	 * @param p la Position de la tour
@@ -67,9 +70,8 @@ public abstract class Tower {
 		return level<3;
 	}
 	
-	//TODO: mettre la méthode abstraite et la redéfinir pour les deux classes filles
-	// et faire la javadoc
-	public void updating() {
-		
-	}
+	/**
+	 * Augmente d'un niveau le niveau de la tour
+	 */
+	public abstract void updating();
 }

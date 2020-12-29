@@ -10,8 +10,8 @@ public abstract class Monster extends ImageMobile {
 	public int reward;
 	//Nombre de vies du monstre
 	public int life;
-	
-	//TODO : ajouter des niveaux pour les monstres
+	//Niveau du monstre
+	public int level;
 	
 	/**
 	 * Classe abstraite qui gèrent les monstres
@@ -36,4 +36,44 @@ public abstract class Monster extends ImageMobile {
 	public void update(double normalizedX, double normalizedY) {
 		super.update(normalizedX, normalizedY);
 	}
+
+	public boolean hasReached(){
+		return reached;
+	}
+	public boolean isDead(){
+		return (level==1 && life==0);
+	}
+
+	public abstract void takeLifePoint();
+
+	/**
+	 * Enlève un point de vie au monstre
+	 * @param life le nombre de point de vie au début de la vie du monstre
+	 */
+	protected void takeLifePoint(int life){
+		this.life--;
+		if (this.life==0){
+			switch (level){
+				case 2:
+					level--;
+					this.life = life;
+					break;
+				case 3:
+					level--;
+					this.life = life;
+					break;
+			}
+		}
+	}
+
+	public void setLevel(int Level){
+		for (int i=1; i<=level; i++){
+			this.levelUp();
+		}
+	}
+
+	public void levelUp(){
+		//TODO : augmente le niveau du monstre de 1 (doit être abstraite)
+	}
+
 }

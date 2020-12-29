@@ -5,13 +5,19 @@ import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
+
 public class ArcherTower extends Tower {
+	public static final String IMAGE = "images/ArcherTowerLevel1.png";
+	public static final int SPEED = 15;
+	public static final int PRICE = 50;
+	public static final double  REACH = 0.2;
+
 	/**
 	 * Classe qui gère les tours d'archers
 	 * @param p la position de la tour
 	 */
 	public ArcherTower(Position p) {
-		super(p, String.format("images/ArcherTowerLevel%d.png", 1), 15, 50, 0.2);
+		super(p, IMAGE, SPEED, PRICE, REACH);
 	}
 	
 	@Override
@@ -31,7 +37,7 @@ public class ArcherTower extends Tower {
 		System.out.println("Mise à jour de la tour ");
 		this.level++;
 		this.image = String.format("images/ArcherTowerLevel%d.png", this.level);
-		this.speed -=2*10;
-		this.reach += 0.005;
+		this.speed -= (SPEED/2)*10;
+		this.reach += REACH/2;
 	}
 }

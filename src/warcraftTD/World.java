@@ -15,6 +15,7 @@ import warcraftTD.util.StdDraw;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
 import java.awt.Font; 
 import java.util.Random;
@@ -55,9 +56,14 @@ public class World {
 	boolean end = false;
 	
 	//Chemin des monstres
-	ArrayList<Position> pathMonsters; //position et la position suivante
+	ArrayList<Position> pathMonsters;
+	//Positions des images du chemin
 	Set<Position> path;
 	
+	//Liste des monstres
+	Deque<Integer> waves = new LinkedList<Integer>();
+	long timeWave; //temps en entre deux vagues;
+	long timeMonster; //temps d'apparition entre chaque monstres;
 	
 	/**
 	 * Initialisation du monde en fonction de la largeur, la hauteur et le nombre de cases données
@@ -75,12 +81,19 @@ public class World {
 		this.nbSquareY = nbSquareY;
 		squareWidth = (double) 1 / nbSquareX;
 		squareHeight = (double) 1 / nbSquareY;
-		spawn = new Position(startSquareX * squareWidth + squareWidth / 2, startSquareY * squareHeight + squareHeight / 2);
+		spawn = createPosition(startSquareX, startSquareY);
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
-		
-		//initialise le chemin
-		int[][] chemin = new int[5][2];
+		initPath(startSquareX, startSquareY);
+		initWaves();
+	}
+
+	/**
+	 * Initialise le chemin sur lequel passera les monstres
+	 */
+	public void initPath(int startSquareX, int startSquareY){
+		//Prend des points au hasard dans le cadrillage
+		int[][] chemin = new int[5][2]; //on prend 5 points sur le cadrillage
 		chemin[0][0] = startSquareX; chemin[0][1] = startSquareY;
 		Random rd = new Random();
 		int index = 1;
@@ -88,30 +101,40 @@ public class World {
 			int x = rd.nextInt(nbSquareX-2);
 			int y = rd.nextInt(nbSquareY);
 			int j = 0;
+			//vérfie certaines conditions sur les points
+			//les points doivent être sur des lignes et des colonnes différentes
 			while  (j!=index && !(equalsTo(chemin[j][0], x, 1) || equalsTo(chemin[j][1], y, 1))) j++;
 			if (j==index) {
 				chemin[index][0]=x; chemin[index][1]=y;
 				index++;
 			}
 		}
+		//ajout du point d'arrivé
 		chemin[4][0] = nbSquareX-1;
 		chemin[4][1] = nbSquareY-1;
 		
+		//on transforme les points en Position dans le canevas
+		//on relie les points
 		pathMonsters = new ArrayList<Position>();
 		path = new TreeSet<Position>();
+		//on parcourt la liste de point créer précédement
 		for (int i=1; i<chemin.length; i++) {
 			int x = chemin[i-1][0]; int y = chemin[i-1][1];
 			int nextx = chemin[i][0]; int nexty = chemin[i][1];
 			int dx = nextx - x;
 			int dy = nexty - y;
 			pathMonsters.add(createPosition(x,y));
+			//on relie horizontalement
 			for (int n=x; n!=nextx; n=n+signe(dx))
 				path.add(createPosition(n, y));
 			pathMonsters.add(createPosition(nextx, y));
+			//on relie verticalement
 			for (int n=y; n!=nexty; n=n+signe(dy))
-				this.path.add(createPosition(nextx, n));
+				path.add(createPosition(nextx, n));
 		}
-		pathMonsters.add(createPosition(chemin[chemin.length-1][0], chemin[chemin.length-1][1]));
+		Position p = createPosition(chemin[chemin.length-1][0], chemin[chemin.length-1][1]);
+		path.add(p);
+		pathMonsters.add(p);
 	}
 	
 	private int signe(int n) {
@@ -124,6 +147,21 @@ public class World {
 
 	private Position createPosition(int x, int y) {
 		return new Position(x * squareWidth + squareWidth / 2, y * squareHeight + squareHeight / 2);
+	}
+
+	/**
+	 * Initialise les vagues : le nombres de vagues de monstres et le nombre de monstres par vagues
+	 */
+	public void initWaves(){
+		Random rd = new Random();
+		int nbwaves = rd.nextInt(5+1) + 10;
+		int nbmonstremin = 2;
+		for (int i=0; i<nbwaves; i++){
+			int nbmonsters = rd.nextInt(nbmonstremin+1) + nbmonstremin;
+			if (i%5==0) nbmonsters = Integer.MAX_VALUE; //Integer.MAX_VALUE représente un boss
+			waves.push(nbmonsters);
+			nbmonstremin *= 2;
+		}
 	}
 	
 	/**
@@ -139,13 +177,14 @@ public class World {
 	  * Initialise le chemin sur la position du point de départ des monstres. Cette fonction permet d'afficher une route qui sera différente du décor.
 	  */
 	 public void drawPath() {
+		 for (Position p: path)
+			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
 		 Position sp = spawn.clone();
+		 //TODO : modifier l'image de départ
 		 StdDraw.setPenColor(StdDraw.YELLOW);
 		 StdDraw.filledRectangle(sp.x, sp.y, squareWidth / 2, squareHeight / 2);
-		 for (Position p: path) {
-			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
-		 }
 		 StdDraw.picture((nbSquareX-1) * squareWidth + squareWidth / 2, (nbSquareY-1) * squareHeight + squareHeight / 2, "images/Castel.png", squareWidth, squareHeight);
+		  
 	 }
 	 
 	 /**
@@ -182,14 +221,19 @@ public class World {
 		case 'e': 
 			//indique par une flèche les tours qui peuvent être évoluées
 			for (Tower t: towers) {
-				if (t.isUpdatable()) {
-					StdDraw.picture(t.p.x, t.p.y, "images/up.png");
+				switch (t.level){
+					case 1:
+						StdDraw.picture(t.p.x, t.p.y, "images/up1.png");
+						break;
+					case 2:
+						StdDraw.picture(t.p.x, t.p.y, "images/up2.png");
+						break;
 				}
 			}
 			break;
 		case 'z' : //on désélectionne
 			break;
-		case 'r': //TODO : à finir
+		case 'r': //TODO : à finir pour avoir le rayon d'une tour
 			break;
 		}
 	 }
@@ -212,15 +256,18 @@ public class World {
 					 m.reached = true;
 				 }
 			 }
-			 if (!m.reached && m.life!=0) m.update(squareWidth, squareHeight);
+			 //TODO : faudrait plutot creer une méthode dans monster
+			 //isDead() et une méthode hasReached()
+			 if (!m.hasReached() && !m.isDead()) m.update(squareWidth, squareHeight);
 			 else {
 				 //suppression du monstre
-				 if (m.life==0) this.money+=m.reward;
+				 if (m.isDead()) this.money += m.reward;
 				 it.remove();
 				 if (m.reached) life--;
 			 }
 		 }
 	 }
+	 
 	 
 	 
 	 /**
@@ -329,30 +376,29 @@ public class World {
 		switch (key) {
 		case 'a':
 			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
-				if (this.money>=50) {
+				if (this.money>=ArcherTower.PRICE) {
 					towers.add(new ArcherTower(mouse));
-					this.money-=50;
+					this.money-=ArcherTower.PRICE;
 				}
 				else System.out.println("Vous n'avez pas assez d'or !");
 			}
 			break;
 		case 'b':
 			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
-				if (this.money>=60) {
+				if (this.money>=BombTower.PRICE) {
 					towers.add(new BombTower(mouse));
-					this.money-=60;
+					this.money-=BombTower.PRICE;
 				}
 				else System.out.println("Vous n'avez pas assez d'or !");
 				
 			}
 			break;
 		case 'e':
-			//TODO : modifier pour tenir compte des sous
 			if (positions.containsKey(mouse)) {
-				//on appuie sur une tour
 				Tower t = positions.get(mouse);
-				if (t.isUpdatable()) {
-					t.updating();
+				if (this.money>=Tower.UPDATEPRICE && t.isUpdatable()){
+				t.updating();
+				this.money -= Tower.UPDATEPRICE;
 				}
 				else System.out.println("La tour ne peut pas être mise à jour !");
 			}
@@ -367,8 +413,6 @@ public class World {
 	 * offertes au joueur pour intéragir avec le clavier
 	 */
 	public void printCommands() {
-		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
-		//pour notamment supprimer les print dans la console
 		System.out.println("Press A to select Arrow Tower (cost 50g).");
 		System.out.println("Press B to select Cannon Tower (cost 60g).");
 		System.out.println("Press E to update a tower (cost 40g).");
@@ -376,6 +420,15 @@ public class World {
 		System.out.println("Press Z to cancel a selection");
 		System.out.println("Press R to see the reach of a tower");
 		System.out.println("Press S to start.");
+	}
+	
+	/**
+	 * Genère une vague de monstres
+	 * @return true ssi une vague a été générée
+	 */
+	public boolean generateWave(){
+		//TODO : completer
+		return true;
 	}
 	
 	/**
@@ -394,7 +447,6 @@ public class World {
 				mouseClick(StdDraw.mouseX(), StdDraw.mouseY());
 				StdDraw.pause(50);
 			}
-			//TODO: generer des monstres
 
 			end = update()==0 || key=='q';
 			StdDraw.show();

@@ -7,12 +7,18 @@ import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
 public class BombTower extends Tower{
+
+	public static final String IMAGE = "images/BombTowerLevel1.png";
+	public static final int SPEED = 20;
+	public static final int PRICE = 60;
+	public static final double  REACH = 0.15;
+
 	/**
 	 * Classe des tours de Bombes
 	 * @param p la position de la tour
 	 */
 	public BombTower(Position p) {
-		super(p, "images/BombTowerLevel1.png", 20, 60, 0.15);
+		super(p,IMAGE, SPEED, PRICE, REACH);
 	}
 	
 	@Override
@@ -32,7 +38,7 @@ public class BombTower extends Tower{
 	public void updating() {
 		this.level++;
 		this.image = String.format("images/BombTowerLevel%d.png", this.level);
-		this.speed -=15;
-		this.reach += 0.008;
+		this.speed -= (SPEED/2)*10;
+		this.reach += REACH/2;
 	}
 }
