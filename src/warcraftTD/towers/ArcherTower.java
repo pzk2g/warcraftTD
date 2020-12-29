@@ -18,9 +18,9 @@ public class ArcherTower extends Tower {
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
 		if (tps-this.time>this.speed) {
-			this.time = tps;
-			if (m.p.dist(this.p)<=super.reach){
-				return new Arrow(super.p.clone(), m);
+			if (m.p.dist(this.p)<=this.reach){
+				this.time = tps;
+				return new Arrow(this.p.clone(), m);
 			}
 		}
 		return null;

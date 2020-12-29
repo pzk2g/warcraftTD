@@ -54,7 +54,7 @@ public class Position implements Comparable<Position> {
 		if (p==null) return false;
 		if (p instanceof Position) {
 			final Position p1 = (Position) p;
-			return this.equals(p1, 0.0000001);
+			return this.equals(p1, 0.00000001);
 		}
 		return false;
 	}

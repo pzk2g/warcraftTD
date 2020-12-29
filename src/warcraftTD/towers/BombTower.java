@@ -19,10 +19,11 @@ public class BombTower extends Tower{
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
 		if (tps-this.time>this.speed) {
-			this.time = tps;
 			if (m instanceof BaseMonster)
-				if (m.p.dist(super.p) <= super.reach)
-					return new Bomb(super.p.clone(), m);
+				if (m.p.dist(this.p) <= this.reach) {
+					this.time = tps;
+					return new Bomb(this.p.clone(), m);
+				}
 		}
 		return null;
 	}

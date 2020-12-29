@@ -41,9 +41,9 @@ abstract public class ImageMobile {
 			
 			//conditions pour voir si on a dépassé nextP
 			if (dx>0 && px>nextP.x) px = nextP.x;
-			if (dy>0 && py>nextP.y) py = nextP.y;
-			if (dx<0 && px<nextP.x) px = nextP.x;
-			if (dy<0 && py<nextP.y) py = nextP.y;
+			else if (dy>0 && py>nextP.y) py = nextP.y;
+			else if (dx<0 && px<nextP.x) px = nextP.x;
+			else if (dy<0 && py<nextP.y) py = nextP.y;
 			p.x = px;
 			p.y = py;
 		}	

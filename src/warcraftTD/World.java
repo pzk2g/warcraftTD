@@ -1,8 +1,9 @@
 package warcraftTD;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.Monster;
@@ -16,15 +17,16 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.Font; 
+import java.util.Random;
 
 
 
 public class World {
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
-	List<Monster> monsters = new LinkedList<Monster>();
+	LinkedList<Monster> monsters = new LinkedList<Monster>();
 	
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
-	List<Tower> towers = new LinkedList <Tower>();
+	ArrayList<Tower> towers = new ArrayList <Tower>();
 
 	//l'ensemble des missiles, pour gerer (notamment) l'affichage
 	List<Missile> missiles = new LinkedList<Missile>();
@@ -44,7 +46,7 @@ public class World {
 	int life = 20;
 	
 	//Nombre d'argent du joueur
-	int money = 100;
+	int money = 10000;
 	
 	// Commande sur laquelle le joueur appuie (sur le clavier)
 	char key;
@@ -52,12 +54,9 @@ public class World {
 	// Condition pour terminer la partie
 	boolean end = false;
 	
-	//Chemin du plateau
-	Map<Position, Position> path; //position et la position suivante
-	
-	//Message d'alerte
-	boolean alertMessage = false;
-	String textAlertMessage;
+	//Chemin des monstres
+	ArrayList<Position> pathMonsters; //position et la position suivante
+	Set<Position> path;
 	
 	
 	/**
@@ -79,24 +78,52 @@ public class World {
 		spawn = new Position(startSquareX * squareWidth + squareWidth / 2, startSquareY * squareHeight + squareHeight / 2);
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
-		path = new TreeMap<Position, Position>(); 
 		
-		//TODO : trouver une méthode pour générer des chemins...
 		//initialise le chemin
-//		int[][] chemin = {{3, 19}, {3, 18}, {3, 17}, {3, 16}, {3, 15}, {4, 15}, {5, 15}, {6, 15}, {7, 15},
-//		{8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {15, 16}, {15, 17}, 
-//		{15, 18}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {19, 19}};
-		int [][] chemin = {{3, 12}, {3, 11}, {3, 10}, {3, 9}, {3, 8}, {3, 7}, {4,7}, {5, 7}, 
-				{6, 7}, {7, 7}, {7, 8}, {7, 9}, {8, 9}, {9, 9}, {10, 9}, {11, 9}, {12, 9},{12, 10}, {12, 11}, {12, 12}};
-		for (int i=0; i<chemin.length-1; i++){
-			Position p = new Position(chemin[i][0] * squareWidth + squareWidth / 2, chemin[i][1] * squareHeight + squareHeight / 2);
-			Position nextP = new Position(chemin[i+1][0] * squareWidth + squareWidth / 2, chemin[i+1][1] * squareHeight + squareHeight / 2);
-			path.put(p, nextP);
+		int[][] chemin = new int[5][2];
+		chemin[0][0] = startSquareX; chemin[0][1] = startSquareY;
+		Random rd = new Random();
+		int index = 1;
+		while (index!=4) {
+			int x = rd.nextInt(nbSquareX-2);
+			int y = rd.nextInt(nbSquareY);
+			int j = 0;
+			while  (j!=index && !(equalsTo(chemin[j][0], x, 1) || equalsTo(chemin[j][1], y, 1))) j++;
+			if (j==index) {
+				chemin[index][0]=x; chemin[index][1]=y;
+				index++;
+			}
 		}
+		chemin[4][0] = nbSquareX-1;
+		chemin[4][1] = nbSquareY-1;
 		
-		int n = chemin.length-1;
-		Position p = new Position(chemin[n][0] * squareWidth + squareWidth / 2, chemin[n][1] * squareHeight + squareHeight / 2);
-		path.put(p, null);
+		pathMonsters = new ArrayList<Position>();
+		path = new TreeSet<Position>();
+		for (int i=1; i<chemin.length; i++) {
+			int x = chemin[i-1][0]; int y = chemin[i-1][1];
+			int nextx = chemin[i][0]; int nexty = chemin[i][1];
+			int dx = nextx - x;
+			int dy = nexty - y;
+			pathMonsters.add(createPosition(x,y));
+			for (int n=x; n!=nextx; n=n+signe(dx))
+				path.add(createPosition(n, y));
+			pathMonsters.add(createPosition(nextx, y));
+			for (int n=y; n!=nexty; n=n+signe(dy))
+				this.path.add(createPosition(nextx, n));
+		}
+		pathMonsters.add(createPosition(chemin[chemin.length-1][0], chemin[chemin.length-1][1]));
+	}
+	
+	private int signe(int n) {
+		return (n>0)?1:-1;
+	}
+	
+	private boolean equalsTo(int a, int x, int epsilon) {
+		return a-epsilon<=x && x<=a+epsilon;
+	}
+
+	private Position createPosition(int x, int y) {
+		return new Position(x * squareWidth + squareWidth / 2, y * squareHeight + squareHeight / 2);
 	}
 	
 	/**
@@ -106,19 +133,19 @@ public class World {
 		 for (int i = 0; i < nbSquareX; i++)
 			 for (int j = 0; j < nbSquareY; j++)
 				 StdDraw.picture(i * squareWidth + squareWidth / 2, j * squareHeight + squareHeight / 2, "images/Grass.png", squareWidth, squareHeight);
-		 
-		 for (Position p: path.keySet()) {
-			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
-		 }
 	 }
 	 
 	 /**
 	  * Initialise le chemin sur la position du point de départ des monstres. Cette fonction permet d'afficher une route qui sera différente du décor.
 	  */
 	 public void drawPath() {
-		 Position p = spawn.clone();
+		 Position sp = spawn.clone();
 		 StdDraw.setPenColor(StdDraw.YELLOW);
-		 StdDraw.filledRectangle(p.x, p.y, squareWidth / 2, squareHeight / 2);
+		 StdDraw.filledRectangle(sp.x, sp.y, squareWidth / 2, squareHeight / 2);
+		 for (Position p: path) {
+			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
+		 }
+		 StdDraw.picture((nbSquareX-1) * squareWidth + squareWidth / 2, (nbSquareY-1) * squareHeight + squareHeight / 2, "images/Castel.png", squareWidth, squareHeight);
 	 }
 	 
 	 /**
@@ -147,10 +174,10 @@ public class World {
 		Position mouse = new Position(normalizedX, normalizedY);
 		switch (key) {
 		case 'a' :
-			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
+			if (!path.contains(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
 			break;
 		case 'b' :
-			if (!path.containsKey(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
+			if (!path.contains(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
 			break;
 		case 'e': 
 			//indique par une flèche les tours qui peuvent être évoluées
@@ -172,23 +199,25 @@ public class World {
 	  * Modifie la position du monstre au cours du temps à l'aide du paramètre nextP.
 	  */
 	 public void updateMonsters() {
-		Iterator<Monster> i = monsters.iterator();
+		Iterator<Monster> it = monsters.iterator();
 		Monster m;
-		while (i.hasNext()) {
-			 m = i.next();
-			 Position nextP = path.get(m.p);
-			 if (path.containsKey(m.p)) {
-				 m.nextP = nextP;
-				 if (m.nextP==null) {
-					 m.reached=true;
+		while (it.hasNext()) {
+			 m = it.next();
+			 //on cherche la prochaine position du monstre dans le chemin
+			 if (pathMonsters.contains(m.p)) {
+				 int i = pathMonsters.indexOf(m.p) + 1;
+				 if (i<pathMonsters.size())
+					 m.nextP = pathMonsters.get(i);
+				 else {
+					 m.reached = true;
 				 }
 			 }
 			 if (!m.reached && m.life!=0) m.update(squareWidth, squareHeight);
 			 else {
 				 //suppression du monstre
 				 if (m.life==0) this.money+=m.reward;
-				 i.remove();
-				 life--;
+				 it.remove();
+				 if (m.reached) life--;
 			 }
 		 }
 	 }
@@ -198,21 +227,20 @@ public class World {
 	  * Pour chaque tour, on vérifie si la tour doit attaquer ou pas
 	  */
 	 public void updateTowers() {
-		 Iterator<Tower> i = towers.iterator();
+		 Iterator<Tower> it = towers.iterator();
 		 Tower t;
-		 while (i.hasNext()) {
-			 t = i.next();
+		 while (it.hasNext()) {
+			 t = it.next();
 			 //cherche un monstre qui est dans sa zone de tir
-			 ArrayList<Monster> lmonsters = new ArrayList<Monster>(monsters);
-			 int index = 0;
+			 Iterator<Monster> itm = monsters.iterator();
 			 boolean find = false;
-			 Missile missile=null;
-			 while (index!=lmonsters.size() && !find){
-				 missile = t.attack(lmonsters.get(index));
-				 if (missile!=null) find=true;
-				 index++;
+			 Missile missile = null;
+			 while (itm.hasNext() && !find){
+				 Monster m = itm.next();
+				 missile = t.attack(m);
+				 find = missile!=null;
 			 }
-			 if (missile!=null) missiles.add(missile);
+			 if (find) missiles.add(missile);
 			 t.update(squareWidth, squareHeight);
 		 }
 	 }
@@ -221,14 +249,14 @@ public class World {
 	  * Met à jour les projectiles : les faits avancer et les détruits si besoin
 	  */
 	 public void updateMissiles(){
-		 Iterator<Missile> i = missiles.iterator();
+		 Iterator<Missile> it = missiles.iterator();
 		 Missile msl;
-		 while (i.hasNext()) {
-			 msl = i.next();
+		 while (it.hasNext()) {
+			 msl = it.next();
 			 //TODO : à modifier, ne rentre pas dans la condition
 			 if (msl.p.equals(msl.target.p, 0.01)) {
 				 msl.hit();
-				 i.remove();
+				 it.remove();
 			 }
 			 else msl.update(squareWidth, squareHeight);
 		 }
@@ -241,10 +269,10 @@ public class World {
 	 public int update() {
 		drawBackground();
 		drawPath();
-		drawInfos();
 		updateMonsters();
 		updateTowers();
 		updateMissiles();
+		drawInfos();
 		drawMouse();
 		return life;
 	 }
@@ -300,7 +328,7 @@ public class World {
 		//pour notamment supprimer les print dans la console
 		switch (key) {
 		case 'a':
-			if (!path.containsKey(mouse) && !positions.containsKey(mouse)) {
+			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
 				if (this.money>=50) {
 					towers.add(new ArcherTower(mouse));
 					this.money-=50;
@@ -309,7 +337,7 @@ public class World {
 			}
 			break;
 		case 'b':
-			if (!path.containsKey(mouse) && !positions.containsKey(mouse)) {
+			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
 				if (this.money>=60) {
 					towers.add(new BombTower(mouse));
 					this.money-=60;
