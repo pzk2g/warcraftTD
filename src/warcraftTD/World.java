@@ -347,6 +347,7 @@ public class World {
 			}
 			break;
 		case 'e':
+			//TODO : modifier pour tenir compte des sous
 			if (positions.containsKey(mouse)) {
 				//on appuie sur une tour
 				Tower t = positions.get(mouse);
