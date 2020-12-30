@@ -39,8 +39,7 @@ public abstract class Missile extends ImageMobile{
 	 * Enlève des points de vies au monstre touché
 	 */
 	public void hit() {
-		int life = this.target.life - this.damage;
-		this.target.life = (life<0)?0:life;
+		this.target.takeLifePoint(damage);
 	}
 	
 }

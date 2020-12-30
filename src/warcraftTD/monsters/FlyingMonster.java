@@ -18,12 +18,12 @@ public class FlyingMonster extends Monster {
 	 * @param p
 	 */
 	public FlyingMonster(Position p, int level) {
-		super(IMAGE, p, LIFE, SPEED, REWARD);
-		this.setLevel(level);
+		super(IMAGE, p, LIFE, SPEED, REWARD, level);
+		System.out.println(this.life);
 	}
 
 	@Override
-	public void takeLifePoint(){
-		takeLifePoint(LIFE);
+	public void takeLifePoint(int damage){
+		takeLifePoint(LIFE, damage);
 	}
 }

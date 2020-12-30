@@ -21,10 +21,11 @@ public abstract class Monster extends ImageMobile {
 	 * @param speed la vitesse du monstre
 	 * @param reward la récompense en or lorsque l'on tue le monstre
 	 */
-	public Monster(String image, Position p, int life, double speed, int reward) {
+	public Monster(String image, Position p, int life, double speed, int reward, int level) {
 		super(image, p, p.clone(), speed);
 		this.life = life;
 		this.reward = reward;
+		this.level = level;
 	}
 
 	/**
@@ -44,14 +45,15 @@ public abstract class Monster extends ImageMobile {
 		return (level==1 && life==0);
 	}
 
-	public abstract void takeLifePoint();
+	public abstract void takeLifePoint(int damage);
 
 	/**
 	 * Enlève un point de vie au monstre
 	 * @param life le nombre de point de vie au début de la vie du monstre
 	 */
-	protected void takeLifePoint(int life){
-		this.life--;
+	protected void takeLifePoint(int life, int damage){
+		this.life -= damage;
+		if (this.life<0) this.life = 0;
 		if (this.life==0){
 			switch (level){
 				case 2:
@@ -63,12 +65,6 @@ public abstract class Monster extends ImageMobile {
 					this.life = life;
 					break;
 			}
-		}
-	}
-
-	public void setLevel(int Level){
-		for (int i=1; i<=level; i++){
-			this.levelUp();
 		}
 	}
 

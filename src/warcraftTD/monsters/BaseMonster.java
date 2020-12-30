@@ -15,12 +15,11 @@ public class BaseMonster extends Monster {
 	 * @param level un entier compris entre 1 et 4
 	 */
 	public BaseMonster(Position p, int level) {
-		super(IMAGE, p, LIFE, SPEED, REWARD);
-		this.setLevel(level);
+		super(IMAGE, p, LIFE, SPEED, REWARD, level);
 	}
 
 	@Override
-	public void takeLifePoint(){
-		takeLifePoint(LIFE);
+	public void takeLifePoint(int damage){
+		takeLifePoint(LIFE, damage);
 	}
 }

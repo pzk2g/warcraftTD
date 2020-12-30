@@ -256,14 +256,12 @@ public class World {
 					 m.reached = true;
 				 }
 			 }
-			 //TODO : faudrait plutot creer une méthode dans monster
-			 //isDead() et une méthode hasReached()
 			 if (!m.hasReached() && !m.isDead()) m.update(squareWidth, squareHeight);
 			 else {
 				 //suppression du monstre
 				 if (m.isDead()) this.money += m.reward;
-				 it.remove();
 				 if (m.reached) life--;
+				 it.remove();
 			 }
 		 }
 	 }
@@ -300,7 +298,6 @@ public class World {
 		 Missile msl;
 		 while (it.hasNext()) {
 			 msl = it.next();
-			 //TODO : à modifier, ne rentre pas dans la condition
 			 if (msl.p.equals(msl.target.p, 0.01)) {
 				 msl.hit();
 				 it.remove();
