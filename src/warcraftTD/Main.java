@@ -28,12 +28,12 @@ public class Main {
 		Monster monster8 = new FlyingMonster(new Position(startX * w.squareWidth + w.squareWidth / 2, startY * w.squareHeight + w.squareHeight / 2), 1);
 		w.monsters.add(monster2);
 		w.monsters.add(monster1);
-		w.monsters.add(monster3);
-		w.monsters.add(monster4);
-		w.monsters.add(monster5);
-		w.monsters.add(monster6);
-		w.monsters.add(monster7);
-		w.monsters.add(monster8);
+//		w.monsters.add(monster3);
+//		w.monsters.add(monster4);
+//		w.monsters.add(monster5);
+//		w.monsters.add(monster6);
+//		w.monsters.add(monster7);
+//		w.monsters.add(monster8);
 ;		// Lancement de la boucle principale du jeu
 		w.run();
 	}

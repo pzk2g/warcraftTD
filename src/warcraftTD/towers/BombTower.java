@@ -3,6 +3,7 @@ package warcraftTD.towers;
 import warcraftTD.missiles.Bomb;
 import warcraftTD.missiles.Missile;
 import warcraftTD.monsters.BaseMonster;
+import warcraftTD.monsters.Boss;
 import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
@@ -25,7 +26,8 @@ public class BombTower extends Tower{
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
 		if (tps-this.time>this.speed) {
-			if (m instanceof BaseMonster)
+			if (m instanceof BaseMonster || 
+			((m instanceof Boss) && ((Boss)m).state=='w'))
 				if (m.p.dist(this.p) <= this.reach) {
 					this.time = tps;
 					return new Bomb(this.p.clone(), m);
