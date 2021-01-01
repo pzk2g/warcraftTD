@@ -1,4 +1,4 @@
-package warcraftTD;
+package warcraftTD.util;
 /******************************************************************************
  *  Compilation:  javac StdDraw.java
  *  Execution:    java StdDraw
