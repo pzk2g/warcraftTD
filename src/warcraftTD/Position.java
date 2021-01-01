@@ -1,8 +1,8 @@
-package warcraftTD;
+package warcraftTD.util;
 
 public class Position implements Comparable<Position> {
-	double x;
-	double y;
+	public double x;
+	public double y;
 	
 	/**
 	 * Classe qui permet d'avoir la position sur l'axe des x et des y des monstres et des tours
@@ -14,10 +14,6 @@ public class Position implements Comparable<Position> {
 		this.y = y;
 	}
 	
-	public Position(Position p) {
-		x = p.x;
-		y = p.y;
-	}
 	
 	/**
 	 * Mesure la distance euclidienne entre 2 positions.
@@ -28,19 +24,29 @@ public class Position implements Comparable<Position> {
 		return Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2));
 	}
 	
+	
+	/**
+	 * Indique si la position est dans un carré de taille deux epsilons autour de p 
+	 * @param p une position
+	 * @param epsilon un réel strictement positif
+	 * @return vrai si et seulement si p est dans un carré de taille deux epsilons autour
+	 * de p.
+	 */
 	public boolean equals(Position p, double epsilon) {
 		return this.x-epsilon<= p.x &&  p.x <=this.x+epsilon && this.y-epsilon<=p.y && p.y<=this.y+epsilon;
 	}
 
 	@Override
 	public int compareTo(Position p) {
-			if (p.equals(this)) return 0;
-			else if (p.x<this.x) return -1;
-			else if (p.x==this.x){
-				if (p.y<this.y) return -1;
-				else return 1;
-			}
+		//les deux positions sont égales
+		if (p.equals(this)) return 0;
+		//arbitrairement 
+		else if (p.x<this.x) return -1;
+		else if (p.x==this.x){
+			if (p.y<this.y) return -1;
 			else return 1;
+		}
+		else return 1;
 	}
 
 	@Override
@@ -48,17 +54,21 @@ public class Position implements Comparable<Position> {
 		if (p==null) return false;
 		if (p instanceof Position) {
 			final Position p1 = (Position) p;
-			return this.equals(p1, 0.0001);
+			return this.equals(p1, 0.00000001);
 		}
 		return false;
 	}
 	
-	/**
-	 * Retourne la position du point sur l'axe des x et des y
-	 */
 	@Override
 	public String toString() {
 		return "(" + Double.toString(x) + "," + Double.toString(y) + ")";
+	}
+	
+	@Override
+	public Position clone() {
+		double px = this.x;
+		double py = this.y;
+		return new Position(px, py);
 	}
 
 }
