@@ -1,60 +1,75 @@
-package warcraftTD;
+package warcraftTD.monsters;
 
-public abstract class Monster {
-	// Position du monstre à l'instant t
-	Position p;
-	// Vitesse du monstre
-	double speed;
-	// Position du monstre à l'instant t+1
-	Position nextP;
+import warcraftTD.util.ImageMobile;
+import warcraftTD.util.Position;
+
+public abstract class Monster extends ImageMobile {
 	// Boolean pour savoir si le monstre à atteint le chateau du joueur
-	boolean reached;
-	// Compteur de déplacement pour savoir si le monstre à atteint le chateau du joueur
-	int checkpoint = 0;
+	public boolean reached;
 	//Recompense en or lorsque l'on tue le montre
-	int reward;
+	public int reward;
 	//Nombre de vies du monstre
-	int life;
-	//Chemain de l'image pour le monstre
-	String image;
-	
-	
-	public Monster(Position p,  String image, int life, double speed, int reward) {
-		this.p = p;
-		this.nextP = new Position(p);
-		this.image = image;
-		this.life = life;
-		this.reward = reward;
-		this.speed = speed;
-	}
+	public int life;
+	//Niveau du monstre
+	public int level;
 	
 	/**
-	 * Déplace le monstre en fonction de sa vitesse sur l'axe des x et des y et de sa prochaine position.
+	 * Classe abstraite qui gèrent les monstres
+	 * @param image le chemin l'image dans les fichiers
+	 * @param p la position de l'image
+	 * @param life le nombre de points de vie du monstre
+	 * @param speed la vitesse du monstre
+	 * @param reward la récompense en or lorsque l'on tue le monstre
 	 */
-	public void move() {
-		// Mesure sur quel axe le monstre se dirige.
-		double dx = nextP.x - p.x;
-		double dy = nextP.y - p.y;
-		if (dy + dx != 0){
-			// Mesure la distance à laquelle le monstre à pu se déplacer.
-			double ratioX = dx/(Math.abs(dx) + Math.abs(dy));
-			double ratioY = dy/(Math.abs(dx) + Math.abs(dy));
-			p.x += ratioX * speed;
-			p.y += ratioY * speed;
+	public Monster(String image, Position p, int life, double speed, int reward, int level) {
+		super(image, p, p.clone(), speed);
+		this.life = life;
+		this.reward = reward;
+		this.level = level;
+	}
+
+	/**
+	 * Met à jour le monstre à l'échelle vis-à-vis des autres images
+	 * @param normalizedX l'échelle des x
+	 * @param normalizedY l'échelle des y
+	 */
+	@Override
+	public void update(double normalizedX, double normalizedY) {
+		super.update(normalizedX, normalizedY);
+	}
+
+	public boolean hasReached(){
+		return reached;
+	}
+	public boolean isDead(){
+		return (level==1 && life==0);
+	}
+
+	public abstract void takeLifePoint(int damage);
+
+	/**
+	 * Enlève un point de vie au monstre
+	 * @param life le nombre de point de vie au début de la vie du monstre
+	 */
+	protected void takeLifePoint(int life, int damage){
+		this.life -= damage;
+		if (this.life<0) this.life = 0;
+		if (this.life==0){
+			switch (level){
+				case 2:
+					level--;
+					this.life = life;
+					break;
+				case 3:
+					level--;
+					this.life = life;
+					break;
+			}
 		}
 	}
 
-	public void update(double normalizedX, double normalizedY) {
-		move();
-		draw(normalizedX, normalizedY);
-		checkpoint++;
+	public void levelUp(){
+		//TODO : augmente le niveau du monstre de 1 (doit être abstraite)
 	}
-	
-	/**
-	 * Affiche un monstre qui change de couleur au cours du temps
-	 * Le monstre est représenté par un cercle de couleur bleue ou grise
-	 */
-	public void draw(double normalizedX, double normalizedY) {
-		StdDraw.picture(p.x, p.y, this.image, normalizedX, normalizedY);
-	}
+
 }
