@@ -11,29 +11,52 @@ public class Boss extends Monster {
     public Boss(Position p, int level) {
         super(IMAGE, p, setLife(level), setSpeed(level), setReward(level), level);
     }
-    //TODO : faire des switch
-    private static int setReward(int level) {
-        int reward = 0;
-        if(level==1) reward = 60;
-        else if(level==2) reward = 110;
-        else if(level==3) reward = 160;
-        return reward;
-    }
+   	private static int setReward(int level) {
+		int reward = 0;
+		switch(level) {
+		case 1:
+			reward = 60;
+			break;
+		case 2:
+			reward = 110;
+			break;
+		case 3:
+			reward = 160;
+			break;
+		}
+		return reward;
+	}
 
-    private static double setSpeed(int level) {
-        double speed = 0;
-        if(level==1) speed = 0.02;
-        else if(level==2) speed = 0.05;
-        else if(level==3) speed = 0.08;
-        return speed;
-    }
-    
-    public static int setLife(int level) {
-        int life = 0;
-        if(level==1) life = 15;
-        else if(level==2) life = 25;
-        else if(level==3) life = 50;;
-        return life;    
+	private static double setSpeed(int level) {
+		double speed = 0;
+		switch(level) {
+		case 1:
+			speed = 0.02;
+			break;
+		case 2:
+			speed = 0.05;
+			break;
+		case 3:
+			speed = 0.08;
+			break;
+		}
+		return speed;
+	}
+	
+	public static int setLife(int level) {
+		int life = 0;
+		switch(level) {
+		case 1:
+			life = 15;
+			break;
+		case 2:
+			life = 25;
+			break;
+		case 3:
+			life = 50;
+			break;
+		}
+		return life;	
     }
     
     @Override
