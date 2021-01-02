@@ -35,7 +35,7 @@ public abstract class Tower {
 	 */
 	public Tower(Position p, String chemin, int speed, int price, double reach) {
 		this.p = p;
-		this.speed = speed*10;
+		this.speed = speed*20;
 		this.price = price;
 		this.image = chemin;
 		this.reach = reach;

@@ -12,7 +12,7 @@ public class BombTower extends Tower{
 	public static final String IMAGE = "images/BombTowerLevel1.png";
 	public static final int SPEED = 20;
 	public static final int PRICE = 60;
-	public static final double  REACH = 0.15;
+	public static final double  REACH = 0.12;
 
 	/**
 	 * Classe des tours de Bombes
@@ -40,7 +40,7 @@ public class BombTower extends Tower{
 	public void updating() {
 		this.level++;
 		this.image = String.format("images/BombTowerLevel%d.png", this.level);
-		this.speed -= (SPEED/2)*10;
-		this.reach += REACH/2;
+		this.speed -= (SPEED/3)*20;
+		this.reach += 0.02;
 	}
 }

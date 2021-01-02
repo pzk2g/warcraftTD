@@ -1,5 +1,6 @@
 package warcraftTD.util.buttons;
 import warcraftTD.util.Position;
+import warcraftTD.util.StdDraw;
 
 
 public class ButtonText extends Button{
@@ -12,13 +13,13 @@ public class ButtonText extends Button{
 
 	@Override
 	public boolean action() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
+		StdDraw.text(p.x, p.y, text);
 		
 	}
 }

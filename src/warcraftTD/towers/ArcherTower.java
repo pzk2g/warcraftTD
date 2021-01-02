@@ -10,7 +10,7 @@ public class ArcherTower extends Tower {
 	public static final String IMAGE = "images/ArcherTowerLevel1.png";
 	public static final int SPEED = 15;
 	public static final int PRICE = 50;
-	public static final double  REACH = 0.2;
+	public static final double  REACH = 0.15;
 
 	/**
 	 * Classe qui gère les tours d'archers
@@ -37,7 +37,7 @@ public class ArcherTower extends Tower {
 		System.out.println("Mise à jour de la tour ");
 		this.level++;
 		this.image = String.format("images/ArcherTowerLevel%d.png", this.level);
-		this.speed -= (SPEED/2)*10;
-		this.reach += REACH/2;
+		this.speed -= (SPEED/2)*20;
+		this.reach += 0.05;
 	}
 }

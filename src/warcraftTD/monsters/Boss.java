@@ -17,25 +17,31 @@ public class Boss extends Monster {
     //TODO : faire des switch
     private static int setReward(int level) {
         int reward = 0;
-        if(level==1) reward = 60;
-        else if(level==2) reward = 110;
-        else if(level==3) reward = 160;
+        for (int i=0; i<level; i++) reward +=60;
         return reward;
     }
 
     private static double setSpeed(int level) {
-        double speed = 0;
-        if(level==1) speed = 0.02;
-        else if(level==2) speed = 0.05;
-        else if(level==3) speed = 0.08;
+        double speed = 0.05;
+        for (int i=1; i<=level; i++) speed+=0.03;
         return speed;
     }
     
     public static int setLife(int level) {
-        int life = 0;
-        if(level==1) life = 15;
-        else if(level==2) life = 25;
-        else if(level==3) life = 50;;
+        int life;
+        switch (level) {
+        case 1:
+        	life = 15;
+        	break;
+        case 2:
+        	life = 25;
+        	break;
+        case 3:
+        	life = 50;
+        	break;
+        default:
+        	throw new IllegalArgumentException("Level must be between 1 et 3");
+        }
         return life;    
     }
     
@@ -47,5 +53,10 @@ public class Boss extends Monster {
     public char getState(){
         //TODO : à finir
         return ' ';
+    }
+    
+    @Override
+    public void draw(double normalisedX, double normalisedY) {
+    	//TODO : à faire draw
     }
 }

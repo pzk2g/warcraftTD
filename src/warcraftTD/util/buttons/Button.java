@@ -21,7 +21,7 @@ public abstract class Button {
 		return isBetween(mouse.x, p.x, width) && isBetween(mouse.y, p.y, heigth);
 	}
 	
-	public boolean isBetween(double x, double a, double epsilon) {
+	private boolean isBetween(double x, double a, double epsilon) {
 		return a-epsilon<=x && x<=a+epsilon;
 	}
 	

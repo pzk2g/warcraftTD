@@ -15,7 +15,6 @@ import warcraftTD.util.StdDraw;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.Iterator;
 import java.awt.Font; 
 import java.util.Random;
@@ -57,13 +56,13 @@ public class World {
 	
 	//Chemin des monstres
 	ArrayList<Position> pathMonsters;
+	
 	//Positions des images du chemin
 	Set<Position> path;
 	
-	//Liste des monstres
-	Deque<Integer> waves = new LinkedList<Integer>();
-	long timeWave; //temps en entre deux vagues;
-	long timeMonster; //temps d'apparition entre chaque monstres;
+	//Gestion des vagues de monstres
+	Waves waves;
+	
 	
 	/**
 	 * Initialisation du monde en fonction de la largeur, la hauteur et le nombre de cases données
@@ -85,7 +84,7 @@ public class World {
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
 		initPath(startSquareX, startSquareY);
-		initWaves();
+		waves = new Waves((new Random()).nextInt(20)+3);
 	}
 
 	/**
@@ -149,20 +148,7 @@ public class World {
 		return new Position(x * squareWidth + squareWidth / 2, y * squareHeight + squareHeight / 2);
 	}
 
-	/**
-	 * Initialise les vagues : le nombres de vagues de monstres et le nombre de monstres par vagues
-	 */
-	public void initWaves(){
-		Random rd = new Random();
-		int nbwaves = rd.nextInt(5+1) + 10;
-		int nbmonstremin = 2;
-		for (int i=0; i<nbwaves; i++){
-			int nbmonsters = rd.nextInt(nbmonstremin+1) + nbmonstremin;
-			if (i%5==0) nbmonsters = Integer.MAX_VALUE; //Integer.MAX_VALUE représente un boss
-			waves.push(nbmonsters);
-			nbmonstremin *= 2;
-		}
-	}
+	
 	
 	/**
 	 * Définit le décors du plateau de jeu.
@@ -368,8 +354,6 @@ public class World {
 		for (Tower t : towers) {
 			positions.put(t.p, t);
 		}
-		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
-		//pour notamment supprimer les print dans la console
 		switch (key) {
 		case 'a':
 			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
@@ -401,6 +385,7 @@ public class World {
 			}
 			break;
 		case 'r':
+			//TODO : faire le rayon de viser des tours !
 			System.out.println("Ici, on voit le rayon de visé d'une tour");
 		}
 	}
@@ -419,19 +404,24 @@ public class World {
 		System.out.println("Press S to start.");
 	}
 	
-	/**
-	 * Genère une vague de monstres
-	 * @return true ssi une vague a été générée
-	 */
-	public boolean generateWave(){
-		//TODO : completer
-		return true;
+	public void controleWaves() {
+		Monster m = waves.createMonster(spawn.clone());
+		if (m!=null) {
+			monsters.add(m);
+		}
+		else {
+			if (monsters.size()==0) {
+				waves.newWave();
+			}
+		}	
 	}
+	
+	
 	
 	/**
 	 * Récupère la touche entrée au clavier ainsi que la position de la souris et met à jour le plateau en fonction de ces interractions
 	 */
-	public void run() {
+	public boolean run() {
 		printCommands();
 		while(!end) {	
 			StdDraw.clear();
@@ -444,10 +434,12 @@ public class World {
 				mouseClick(StdDraw.mouseX(), StdDraw.mouseY());
 				StdDraw.pause(50);
 			}
-
-			end = update()==0 || key=='q';
+			controleWaves();
+			System.out.println(monsters);
+			end = update()==0 || key=='q'|| waves.end();
 			StdDraw.show();
 			StdDraw.pause(20);
 		}
+		return waves.end();
 	}
 }
