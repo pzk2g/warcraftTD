@@ -67,13 +67,9 @@ public abstract class Monster extends ImageMobile {
 			}
 		}
 	}
-
-	public void levelUp(){
-		//TODO : augmente le niveau du monstre de 1 (doit être abstraite)
-	}
 	
 	public String toString() {
-		return life + " " + " " + level;
+		return life + " " + this.getClass() + " " + level;
 	}
 
 }

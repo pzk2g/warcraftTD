@@ -22,8 +22,8 @@ public class Boss extends Monster {
     }
 
     private static double setSpeed(int level) {
-        double speed = 0.05;
-        for (int i=1; i<=level; i++) speed+=0.03;
+        double speed = 0.005;
+        for (int i=1; i<level; i++) speed+=0.003;
         return speed;
     }
     
@@ -55,8 +55,8 @@ public class Boss extends Monster {
         return ' ';
     }
     
-    @Override
-    public void draw(double normalisedX, double normalisedY) {
-    	//TODO : à faire draw
-    }
+//    @Override
+//    public void draw(double normalisedX, double normalisedY) {
+//    	//TODO : à faire draw
+//    }
 }

@@ -10,96 +10,105 @@ import warcraftTD.util.Position;
 public class Waves {
 	private class Wave{
 		// comteur de temps d'apparition entre chaque monstres;
-		long timeMonster;
+		long timeMonsters;
 		//temps pour générer un monstre
-		int timesGenerateMonster;
-		//miveau des monstres
-		int level;
+		int timesGenerateMonsters;
+		//miveaux des monstres
+		int levels;
 		//nombre de monstres à créer;
-		int nbMonster;
+		int nbMonsters;
 		//
 		boolean premier;
 
-		public Wave(int level, int nbMonster){
-			this.level = level;
-			this.nbMonster = nbMonster;
-			this.timeMonster = System.currentTimeMillis();
-			this.timesGenerateMonster = (new Random()).nextInt(1000)+500;
-			this.premier = true;
+		public Wave(int levels, int nbMonsters){
+			this.levels = levels;
+			this.nbMonsters = nbMonsters;
+			this.timeMonsters = System.currentTimeMillis();
+			this.timesGenerateMonsters = (new Random()).nextInt(1000)+500;
+			this.premier = nbMonsters>1;
 		}
 		
 		public Monster createMonster(char type, Position beginMonster) {
 			Monster m = null;
 			long time = System.currentTimeMillis();
-			if (time-timeMonster>timesGenerateMonster || premier) {
-				if (premier) premier = false;
+			if (!isEmpty() && (time-this.timeMonsters>this.timesGenerateMonsters || this.premier)) {
+				if (this.premier) this.premier = false;
 				switch (type) {
 				case 'w':
-					m = new BaseMonster(beginMonster, level);
+					m = new BaseMonster(beginMonster, this.levels);
 					break;
 				case 'f':
-					m = new FlyingMonster(beginMonster, level);
+					m = new FlyingMonster(beginMonster, this.levels);
 					break;
 				case 'b':
-					m = new Boss(beginMonster, level);
+					m = new Boss(beginMonster, this.levels);
 					break;
 				}
-				this.timesGenerateMonster = (new Random()).nextInt(1000)+500;
-				timeMonster = time;
-				nbMonster--;
+				int mintimes = 500-10*this.levels<=10? 10 : 500-10*levels;
+				this.timesGenerateMonsters = (new Random()).nextInt(mintimes)+mintimes;
+				this.timeMonsters = time;
+				this.nbMonsters--;
 			}
 			return m;
 		}
 		
 		public boolean isEmpty() {
-			return nbMonster==0;
+			return this.nbMonsters<=0;
 		}
 	}
 	
 	// nombre de vagues
 	int nbWaves;
 	// nombre de monstres
-	int nbMonsters;
+	int nbMonster;
 	int waveCounter;
 	//vague courant
 	Wave wave;
 	//niveau des monstres
 	int level;
+	//indique si la vague est une vague de boss
+	boolean boss;
 	
 	public Waves(int nbWaves) {
-		this.nbWaves = nbWaves;
-		this.nbMonsters = 2;
+		this.nbWaves = nbWaves + 1;
+		this.nbMonster = 3;
 		this.waveCounter = 1;
 		this.level = 1;
-		this.wave = new Wave(level, nbMonsters);
-		this.nbMonsters += 10;
 	}
 
 	public void newWave() {
-		if (waveCounter%(nbWaves/3)==0) {
-			wave = new Wave(level, 1);
-			nbMonsters = 2;
-			level++;
+		int nbMonster;
+		this.boss = this.waveCounter%(this.nbWaves/4)==0;
+		System.out.println(this.boss + " " + this.nbWaves/3 + " " + this.waveCounter);
+		if (this.boss) {
+			nbMonster = 1;
+			this.nbMonster = 3;
 		}
 		else {
-			wave = new Wave(level, nbMonsters);
-			nbMonsters += 10;
+			nbMonster = this.nbMonster;
+			this.nbMonster += this.nbMonster*this.level;
 		}
-		waveCounter++;
+		this.wave = new Wave(level, nbMonster);
+		if (this.boss) level++;
+		this.waveCounter++;
 	}
 	
 	public Monster createMonster(Position beginMonster) {
 		char c;
-		if (waveCounter%(nbWaves/3)!=0){
+		if (!this.boss){
 			Random rd = new Random();
 			c = "wf".charAt(rd.nextInt("wf".length()));
 		}
 		else c = 'b';
-		return wave.isEmpty()?null:wave.createMonster(c, beginMonster);
+		return this.wave.createMonster(c, beginMonster);
 	}
 	
 	public boolean end() {
-		return waveCounter == nbWaves && wave.isEmpty();
+		return this.waveCounter == this.nbWaves && this.wave.isEmpty();
+	}
+	
+	public boolean endWave() {
+		return wave.isEmpty();
 	}
 	
 }

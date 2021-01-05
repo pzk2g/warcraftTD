@@ -84,7 +84,8 @@ public class World {
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
 		initPath(startSquareX, startSquareY);
-		waves = new Waves((new Random()).nextInt(20)+3);
+		waves = new Waves((new Random()).nextInt(20)+20);
+		waves.newWave();
 	}
 
 	/**
@@ -197,17 +198,26 @@ public class World {
 		double normalizedX = (int)(StdDraw.mouseX() / squareWidth) * squareWidth + squareWidth / 2;
 		double normalizedY = (int)(StdDraw.mouseY() / squareHeight) * squareHeight + squareHeight / 2;
 		Position mouse = new Position(normalizedX, normalizedY);
+		StdDraw.setPenColor(255, 0, 0);
+		StdDraw.setPenRadius(0.005);
 		switch (key) {
 		case 'a' :
-			if (!path.contains(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
+			if (!path.contains(mouse)) {
+				StdDraw.circle(normalizedX, normalizedY, ArcherTower.REACH);
+				StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
+			}
 			break;
 		case 'b' :
-			if (!path.contains(mouse)) StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
+			if (!path.contains(mouse)) {
+				StdDraw.circle(normalizedX, normalizedY, BombTower.REACH);
+				StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
+			}
 			break;
 		case 'e': 
 			//indique par une flèche les tours qui peuvent être évoluées
 			for (Tower t: towers) {
 				switch (t.level){
+				//TODO : ajouter les images et faire un format pour supprimer lignes de codes
 					case 1:
 						StdDraw.picture(t.p.x, t.p.y, "images/up1.png");
 						break;
@@ -218,8 +228,6 @@ public class World {
 			}
 			break;
 		case 'z' : //on désélectionne
-			break;
-		case 'r': //TODO : à finir pour avoir le rayon d'une tour
 			break;
 		}
 	 }
@@ -312,8 +320,6 @@ public class World {
 	 * @param key la touche utilisée par le joueur
 	 */
 	public void keyPress(char key) {
-		//TODO : si vraiment on est motivé : créer une classe Message qui affiche un message à l'écran
-		//pour notamment supprimer les print dans la console
 		key = Character.toLowerCase(key);
 		this.key = key;
 		switch (key) {
@@ -384,9 +390,6 @@ public class World {
 				else System.out.println("La tour ne peut pas être mise à jour !");
 			}
 			break;
-		case 'r':
-			//TODO : faire le rayon de viser des tours !
-			System.out.println("Ici, on voit le rayon de visé d'une tour");
 		}
 	}
 	
@@ -410,7 +413,7 @@ public class World {
 			monsters.add(m);
 		}
 		else {
-			if (monsters.size()==0) {
+			if (waves.endWave() && monsters.size()==0) {
 				waves.newWave();
 			}
 		}	
@@ -435,11 +438,12 @@ public class World {
 				StdDraw.pause(50);
 			}
 			controleWaves();
-			System.out.println(monsters);
-			end = update()==0 || key=='q'|| waves.end();
+			end = update()==0 || key=='q'|| (waves.end() && monsters.size()==0 && missiles.size()==0);
 			StdDraw.show();
 			StdDraw.pause(20);
 		}
+
+		System.out.println("fin");
 		return waves.end();
 	}
 }
