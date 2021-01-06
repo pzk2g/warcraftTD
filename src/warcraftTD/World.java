@@ -81,8 +81,6 @@ public class World {
 		squareWidth = (double) 1 / nbSquareX;
 		squareHeight = (double) 1 / nbSquareY;
 		spawn = createPosition(startSquareX, startSquareY);
-		StdDraw.setCanvasSize(width, height);
-		StdDraw.enableDoubleBuffering();
 		initPath(startSquareX, startSquareY);
 		waves = new Waves(nbwaves);
 		waves.newWave();
@@ -405,7 +403,6 @@ public class World {
 		System.out.println("Click on the grass to build it.");
 		System.out.println("Press Z to cancel a selection");
 		System.out.println("Press R to see the reach of a tower");
-		System.out.println("Press S to start.");
 	}
 	
 	public void controleWaves() {

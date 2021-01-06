@@ -1,24 +1,25 @@
 package warcraftTD.util.buttons;
 import warcraftTD.util.Position;
+import warcraftTD.util.StdDraw;
 
 
 public abstract class Button {
 	protected Position p;
-	protected long time;
 	protected double width;
 	protected double heigth;
 	
-	public Button(Position p, int width, int height) {
+	public Button(Position p, double width, double height) {
 		this.p = p;
 		this.width = width;
 		this.heigth = height;
-		this.time = System.currentTimeMillis();
 	}
 	
-	public abstract boolean action();
+	public boolean action() {
+		return StdDraw.isMousePressed() && mouseIn();
+	}
 	
-	public boolean mouseIn(Position mouse) {
-		return isBetween(mouse.getX(), p.getX(), width) && isBetween(mouse.getY(), p.getY(), heigth);
+	public boolean mouseIn() {
+		return isBetween(StdDraw.mouseX(), p.getX(), width) && isBetween(StdDraw.mouseY(), p.getY(), heigth);
 	}
 	
 	private boolean isBetween(double x, double a, double epsilon) {
