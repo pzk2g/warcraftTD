@@ -8,9 +8,8 @@ import warcraftTD.monsters.Monster;
 import warcraftTD.util.Position;
 
 public class BombTower extends Tower{
-
 	public static final String IMAGE = "images/BombTowerLevel1.png";
-	public static final int SPEED = 20;
+	public static final int SPEEDREACHARGING = 20;
 	public static final int PRICE = 60;
 	public static final double  REACH = 0.12;
 
@@ -19,18 +18,18 @@ public class BombTower extends Tower{
 	 * @param p la position de la tour
 	 */
 	public BombTower(Position p) {
-		super(p,IMAGE, SPEED, PRICE, REACH);
+		super(p,IMAGE, SPEEDREACHARGING, REACH);
 	}
 	
 	@Override
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
-		if (tps-this.time>this.speed) {
+		if (tps-this.time>this.speedReacharging) {
 			if (m instanceof BaseMonster || 
 			((m instanceof Boss) && ((Boss)m).state=='w'))
-				if (m.p.dist(this.p) <= this.reach) {
+				if (m.getP().dist(this.getP()) <= this.reach) {
 					this.time = tps;
-					return new Bomb(this.p.clone(), m);
+					return new Bomb(this.getP().clone(), m);
 				}
 		}
 		return null;
@@ -38,9 +37,9 @@ public class BombTower extends Tower{
 	
 	@Override
 	public void updating() {
-		this.level++;
-		this.image = String.format("images/BombTowerLevel%d.png", this.level);
-		this.speed -= (SPEED/3)*20;
+		this.setLevel(this.getLevel()+1);
+		this.setImage(String.format("images/BombTowerLevel%d.png", this.getLevel()));
+		this.speedReacharging -= (SPEEDREACHARGING/3)*5;
 		this.reach += 0.02;
 	}
 }

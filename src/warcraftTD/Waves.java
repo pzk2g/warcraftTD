@@ -44,7 +44,7 @@ public class Waves {
 					m = new Boss(beginMonster, this.levels);
 					break;
 				}
-				int mintimes = 500-10*this.levels<=10? 10 : 500-10*levels;
+				int mintimes = 500-15*(waveCounter-1)<=10? 10 : 500-15*(waveCounter-1);
 				this.timesGenerateMonsters = (new Random()).nextInt(mintimes)+mintimes;
 				this.timeMonsters = time;
 				this.nbMonsters--;
@@ -56,7 +56,7 @@ public class Waves {
 			return this.nbMonsters<=0;
 		}
 	}
-	
+	//TODO : javadoc
 	// nombre de vagues
 	int nbWaves;
 	// nombre de monstres
@@ -72,25 +72,18 @@ public class Waves {
 	public Waves(int nbWaves) {
 		this.nbWaves = nbWaves + 1;
 		this.nbMonster = 3;
-		this.waveCounter = 1;
+		this.waveCounter = 0;
 		this.level = 1;
 	}
 
 	public void newWave() {
-		int nbMonster;
-		this.boss = this.waveCounter%(this.nbWaves/4)==0;
-		System.out.println(this.boss + " " + this.nbWaves/3 + " " + this.waveCounter);
-		if (this.boss) {
-			nbMonster = 1;
-			this.nbMonster = 3;
-		}
-		else {
-			nbMonster = this.nbMonster;
-			this.nbMonster += this.nbMonster*this.level;
-		}
+		this.boss = this.waveCounter!=0 && this.waveCounter%5==0;
+		int nbMonster = this.nbMonster;
+		if (this.boss) nbMonster = 1;
 		this.wave = new Wave(level, nbMonster);
 		if (this.boss) level++;
 		this.waveCounter++;
+		this.nbMonster += this.nbMonster*this.level;
 	}
 	
 	public Monster createMonster(Position beginMonster) {

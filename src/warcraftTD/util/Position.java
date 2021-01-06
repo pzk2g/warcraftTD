@@ -1,8 +1,8 @@
 package warcraftTD.util;
 
 public class Position implements Comparable<Position> {
-	public double x;
-	public double y;
+	private double x;
+	private double y;
 	
 	/**
 	 * Classe qui permet d'avoir la position sur l'axe des x et des y des monstres et des tours
@@ -10,8 +10,8 @@ public class Position implements Comparable<Position> {
 	 * @param y
 	 */
 	public Position(double x, double y) {
-		this.x = x;
-		this.y = y;
+		this.setX(x);
+		this.setY(y);
 	}
 	
 	
@@ -69,6 +69,25 @@ public class Position implements Comparable<Position> {
 		double px = this.x;
 		double py = this.y;
 		return new Position(px, py);
+	}
+	
+	public double getX() {
+		return x;
+	}
+
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+
+	public double getY() {
+		return y;
+	}
+
+
+	public void setY(double y) {
+		this.y = y;
 	}
 
 }

@@ -2,9 +2,9 @@ package warcraftTD.monsters;
 
 import warcraftTD.util.Position;
 
-//TODO : creer un boss (une classe fille)
+
 public class BaseMonster extends Monster {
-	public static final int LIFE = 5;
+	private static final int LIFE = 5;
 	public static final int REWARD = 5;
 	public static final double SPEED = 0.005;
 	public static final String IMAGE = "images/BaseMonster.png";
@@ -12,14 +12,29 @@ public class BaseMonster extends Monster {
 	/**
 	 * Classe qui gère les monstres qui marchent
 	 * @param p une position
-	 * @param level un entier compris entre 1 et 4
+	 * @param level un entier compris entre 1 et 3
 	 */
 	public BaseMonster(Position p, int level) {
-		super(IMAGE, p, LIFE, SPEED, REWARD, level);
+		super(IMAGE, p, (level>3?3:level));
 	}
 
 	@Override
-	public void takeLifePoint(int damage){
-		takeLifePoint(LIFE, damage);
+	protected void setLife(int level) {
+		this.life = 0;
+		for (int i=1; i<=level; i++) this.life += LIFE;
+		
+	}
+
+	@Override
+	protected void setReward(int level) {
+		this.reward = 0;
+		for (int i=1; i<=level; i++) this.reward += REWARD;
+	}
+
+	@Override
+	protected double setSpeed(int level) {
+		double speed = SPEED;
+		for (int i=2; i<=level; i++) speed += 0.004;
+		return speed;
 	}
 }

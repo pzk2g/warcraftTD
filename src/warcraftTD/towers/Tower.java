@@ -7,40 +7,38 @@ import warcraftTD.util.StdDraw;
 
 public abstract class Tower {
 	//position du tour à l'instant t
-	public Position p;
+	private final Position p;
 	//vitesse d'attaque de la tour
-	public int speed;
+	protected int speedReacharging;
 	//portée de l'attaque de la tour
-	public double reach;
-	//prix de contruction d'une tour
-	public int price;
+	protected double reach;
 	//vitesse des projectiles
-	public double speedMissile;
+	protected double speedMissile;
+
 	//chemins des tours à afficher
-	String image;
+	private String image;
 	//temps de rechargement des projectiles
 	protected long time;
 	//niveau de la tour
-	public int level;
+	private int level;
 	//prix amélioration d'une tour
-	public final static int UPDATEPRICE = 30;
+	public final static int UPDATEPRICE = 40;
 
 	/**
 	 * Classe abstraite qui permet de gérer les différentes types de tours 
 	 * @param p la Position de la tour
-	 * @param chemin l'url de l'image de la tour
+	 * @param image l'url de l'image de la tour
 	 * @param speed la vitesse de rechargement de la tour
 	 * @param price le prix de production de la tour
 	 * @param reach la distance de visée de la tour
 	 */
-	public Tower(Position p, String chemin, int speed, int price, double reach) {
+	public Tower(Position p, String image, int speedReacharging, double reach) {
 		this.p = p;
-		this.speed = speed*20;
-		this.price = price;
-		this.image = chemin;
+		this.speedReacharging = speedReacharging*20;
+		this.setImage(image);
 		this.reach = reach;
 		this.time = System.currentTimeMillis();
-		this.level = 1;
+		this.setLevel(1);
 	}
 	
 	/**
@@ -59,7 +57,7 @@ public abstract class Tower {
 	public abstract Missile attack(Monster m);
 	
 	public void draw(double normalizedX, double normalizedY) {
-		StdDraw.picture(p.x, p.y, image, normalizedX, normalizedY);
+		StdDraw.picture(p.getX(), p.getY(), image, normalizedX, normalizedY);
 	}
 	
 	/**
@@ -74,4 +72,26 @@ public abstract class Tower {
 	 * Augmente d'un niveau le niveau de la tour
 	 */
 	public abstract void updating();
+	
+	//TODO : javadoc
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public Position getP() {
+		return p;
+	}
+	
 }

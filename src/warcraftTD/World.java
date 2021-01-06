@@ -73,7 +73,7 @@ public class World {
 	 * @param startSquareX
 	 * @param startSquareY
 	 */
-	public World(int width, int height, int nbSquareX, int nbSquareY, int startSquareX, int startSquareY) {
+	public World(int width, int height, int nbSquareX, int nbSquareY, int startSquareX, int startSquareY, int nbwaves) {
 		this.width = width;
 		this.height = height;
 		this.nbSquareX = nbSquareX;
@@ -84,7 +84,7 @@ public class World {
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
 		initPath(startSquareX, startSquareY);
-		waves = new Waves((new Random()).nextInt(20)+20);
+		waves = new Waves(nbwaves);
 		waves.newWave();
 	}
 
@@ -165,11 +165,11 @@ public class World {
 	  */
 	 public void drawPath() {
 		 for (Position p: path)
-			 StdDraw.picture(p.x, p.y, "images/Path.png", squareWidth, squareHeight);
+			 StdDraw.picture(p.getX(), p.getY(), "images/Path.png", squareWidth, squareHeight);
 		 Position sp = spawn.clone();
 		 //TODO : modifier l'image de départ
 		 StdDraw.setPenColor(StdDraw.YELLOW);
-		 StdDraw.filledRectangle(sp.x, sp.y, squareWidth / 2, squareHeight / 2);
+		 StdDraw.filledRectangle(sp.getX(), sp.getY(), squareWidth / 2, squareHeight / 2);
 		 StdDraw.picture((nbSquareX-1) * squareWidth + squareWidth / 2, (nbSquareY-1) * squareHeight + squareHeight / 2, "images/Castel.png", squareWidth, squareHeight);
 		  
 	 }
@@ -188,6 +188,9 @@ public class World {
 		 //Affichage des vies
 		 StdDraw.picture(0.03, 0.92, "images/heart.png");
 		 StdDraw.text(0.07, 0.92, Integer.toString(life));
+		 //Affichage du numéro de la vague en cours
+		 StdDraw.picture(0.03, 0.87, "images/wave.png");
+		 StdDraw.text(0.07, 0.87, Integer.toString(waves.nbWaves-waves.waveCounter));
 	 }
 	 
 	 /**
@@ -200,32 +203,30 @@ public class World {
 		Position mouse = new Position(normalizedX, normalizedY);
 		StdDraw.setPenColor(255, 0, 0);
 		StdDraw.setPenRadius(0.005);
+		
+		//Set des positions où l'on ne peut pas construire de tours
+		TreeSet<Position> positionst = new TreeSet<Position>();
+		for (Tower t : towers) {
+			positionst.add(t.getP());
+		}
 		switch (key) {
 		case 'a' :
-			if (!path.contains(mouse)) {
+			if (!path.contains(mouse) && !positionst.contains(mouse)) {
 				StdDraw.circle(normalizedX, normalizedY, ArcherTower.REACH);
 				StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
 			}
 			break;
 		case 'b' :
-			if (!path.contains(mouse)) {
+			if (!path.contains(mouse) && !positionst.contains(mouse)) {
 				StdDraw.circle(normalizedX, normalizedY, BombTower.REACH);
 				StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
 			}
 			break;
 		case 'e': 
 			//indique par une flèche les tours qui peuvent être évoluées
-			for (Tower t: towers) {
-				switch (t.level){
-				//TODO : ajouter les images et faire un format pour supprimer lignes de codes
-					case 1:
-						StdDraw.picture(t.p.x, t.p.y, "images/up1.png");
-						break;
-					case 2:
-						StdDraw.picture(t.p.x, t.p.y, "images/up2.png");
-						break;
-				}
-			}
+			for (Tower t: towers)
+				if (t.getLevel()==1 || t.getLevel()==2)
+					StdDraw.picture(t.getP().getX(), t.getP().getY(), String.format("images/up%d.png", t.getLevel()));
 			break;
 		case 'z' : //on désélectionne
 			break;
@@ -242,19 +243,19 @@ public class World {
 		while (it.hasNext()) {
 			 m = it.next();
 			 //on cherche la prochaine position du monstre dans le chemin
-			 if (pathMonsters.contains(m.p)) {
-				 int i = pathMonsters.indexOf(m.p) + 1;
+			 if (pathMonsters.contains(m.getP())) {
+				 int i = pathMonsters.indexOf(m.getP()) + 1;
 				 if (i<pathMonsters.size())
-					 m.nextP = pathMonsters.get(i);
+					 m.setNextP(pathMonsters.get(i));
 				 else {
-					 m.reached = true;
+					 m.setReached(true);
 				 }
 			 }
-			 if (!m.hasReached() && !m.isDead()) m.update(squareWidth, squareHeight);
+			 if (!m.getReached() && !m.isDead()) m.update(squareWidth, squareHeight);
 			 else {
 				 //suppression du monstre
-				 if (m.isDead()) this.money += m.reward;
-				 if (m.reached) life--;
+				 if (m.isDead()) this.money += m.getReward();
+				 if (m.getReached()) life--;
 				 it.remove();
 			 }
 		 }
@@ -292,7 +293,7 @@ public class World {
 		 Missile msl;
 		 while (it.hasNext()) {
 			 msl = it.next();
-			 if (msl.p.equals(msl.target.p, 0.01)) {
+			 if (msl.getP().equals(msl.getTarget().getP(), 0.01)) {
 				 msl.hit();
 				 it.remove();
 			 }
@@ -358,7 +359,7 @@ public class World {
 		//Set des positions où l'on ne peut pas construire de tours
 		TreeMap<Position, Tower> positions = new TreeMap<Position, Tower>();
 		for (Tower t : towers) {
-			positions.put(t.p, t);
+			positions.put(t.getP(), t);
 		}
 		switch (key) {
 		case 'a':
@@ -367,7 +368,7 @@ public class World {
 					towers.add(new ArcherTower(mouse));
 					this.money-=ArcherTower.PRICE;
 				}
-				else System.out.println("Vous n'avez pas assez d'or !");
+				else System.out.println("You haven't got enought money!");
 			}
 			break;
 		case 'b':
@@ -376,7 +377,7 @@ public class World {
 					towers.add(new BombTower(mouse));
 					this.money-=BombTower.PRICE;
 				}
-				else System.out.println("Vous n'avez pas assez d'or !");
+				else System.out.println("You haven't got enought money!");
 				
 			}
 			break;
@@ -387,7 +388,7 @@ public class World {
 				t.updating();
 				this.money -= Tower.UPDATEPRICE;
 				}
-				else System.out.println("La tour ne peut pas être mise à jour !");
+				else System.out.println("The tower can't be updated!");
 			}
 			break;
 		}
@@ -438,12 +439,24 @@ public class World {
 				StdDraw.pause(50);
 			}
 			controleWaves();
-			end = update()==0 || key=='q'|| (waves.end() && monsters.size()==0 && missiles.size()==0);
+			end = update()==0 || key=='q'|| (waves.end() && monsters.size()==0);
 			StdDraw.show();
 			StdDraw.pause(20);
 		}
 
+		end(waves.end() && monsters.size()==0);
 		System.out.println("fin");
 		return waves.end();
+	}
+	
+	/**
+	 * Affiche une image en fin de partie
+	 */
+	public void end(boolean victory) {
+		String image = "defeat";
+		if (victory) image = "victory";
+		StdDraw.picture(0.5, 0.5, "/images/"+image+".png");
+		StdDraw.show();
+		StdDraw.pause(3000);
 	}
 }

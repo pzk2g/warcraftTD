@@ -13,11 +13,30 @@ public class FlyingMonster extends Monster {
 	 * @param p
 	 */
 	public FlyingMonster(Position p, int level) {
-		super(IMAGE, p, LIFE, SPEED, REWARD, level);
+		super(IMAGE, p, (level>3?3:level));
 	}
 
 	@Override
-	public void takeLifePoint(int damage){
-		takeLifePoint(LIFE, damage);
+	protected void setLife(int level) {
+		this.life = LIFE;
+		for (int i=2; i<=level; i++)
+			this.life += LIFE;
+	}
+
+	@Override
+	protected void setReward(int level) {
+		this.reward = REWARD;
+		for (int i=2; i<=level; i++) {
+			this.reward += REWARD;
+			i++;
+		}
+	}
+	
+	@Override
+	protected double setSpeed(int level) {
+		double speed = SPEED;
+		for (int i=2; i<=level; i++)
+			speed +=0.002;
+		return speed;
 	}
 }

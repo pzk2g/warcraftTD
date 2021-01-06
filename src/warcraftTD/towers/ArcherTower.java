@@ -8,7 +8,7 @@ import warcraftTD.util.Position;
 
 public class ArcherTower extends Tower {
 	public static final String IMAGE = "images/ArcherTowerLevel1.png";
-	public static final int SPEED = 15;
+	public static final int SPEEDRECHARGING = 15;
 	public static final int PRICE = 50;
 	public static final double  REACH = 0.15;
 
@@ -17,16 +17,16 @@ public class ArcherTower extends Tower {
 	 * @param p la position de la tour
 	 */
 	public ArcherTower(Position p) {
-		super(p, IMAGE, SPEED, PRICE, REACH);
+		super(p, IMAGE, SPEEDRECHARGING, REACH);
 	}
 	
 	@Override
 	public Missile attack(Monster m) {
 		long tps = System.currentTimeMillis();
-		if (tps-this.time>this.speed) {
-			if (m.p.dist(this.p)<=this.reach){
+		if (tps-this.time>this.speedReacharging) {
+			if (m.getP().dist(this.getP())<=this.reach){
 				this.time = tps;
-				return new Arrow(this.p.clone(), m);
+				return new Arrow(this.getP().clone(), m);
 			}
 		}
 		return null;
@@ -34,10 +34,9 @@ public class ArcherTower extends Tower {
 	
 	@Override
 	public void updating() {
-		System.out.println("Mise à jour de la tour ");
-		this.level++;
-		this.image = String.format("images/ArcherTowerLevel%d.png", this.level);
-		this.speed -= (SPEED/2)*20;
+		this.setLevel(this.getLevel()+1);
+		this.setImage(String.format("images/ArcherTowerLevel%d.png", this.getLevel()));
+		this.speedReacharging -= (SPEEDRECHARGING/2)*10;
 		this.reach += 0.05;
 	}
 }

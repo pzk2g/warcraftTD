@@ -5,13 +5,12 @@ import warcraftTD.util.Position;
 
 public abstract class Monster extends ImageMobile {
 	// Boolean pour savoir si le monstre à atteint le chateau du joueur
-	public boolean reached;
+	private boolean reached;
 	//Recompense en or lorsque l'on tue le montre
-	public int reward;
+	protected int reward;
 	//Nombre de vies du monstre
-	public int life;
-	//Niveau du monstre
-	public int level;
+	protected int life;
+
 	
 	/**
 	 * Classe abstraite qui gèrent les monstres
@@ -21,11 +20,11 @@ public abstract class Monster extends ImageMobile {
 	 * @param speed la vitesse du monstre
 	 * @param reward la récompense en or lorsque l'on tue le monstre
 	 */
-	public Monster(String image, Position p, int life, double speed, int reward, int level) {
-		super(image, p, p.clone(), speed);
-		this.life = life;
-		this.reward = reward;
-		this.level = level;
+	public Monster(String image, Position p, int level) {
+		super(image, p, p.clone());
+		this.setLife(level);
+		this.setReward(level);
+		super.setSpeed(this.setSpeed(level));
 	}
 
 	/**
@@ -37,39 +36,45 @@ public abstract class Monster extends ImageMobile {
 	public void update(double normalizedX, double normalizedY) {
 		super.update(normalizedX, normalizedY);
 	}
-
-	public boolean hasReached(){
-		return reached;
-	}
+	
+	//TODO : faire la javadoc !
 	public boolean isDead(){
-		return (level==1 && life==0);
+		return (life==0);
 	}
-
-	public abstract void takeLifePoint(int damage);
 
 	/**
 	 * Enlève un point de vie au monstre
 	 * @param life le nombre de point de vie au début de la vie du monstre
 	 */
-	protected void takeLifePoint(int life, int damage){
+	public void takeLifePoint(int damage){
 		this.life -= damage;
 		if (this.life<0) this.life = 0;
-		if (this.life==0){
-			switch (level){
-				case 2:
-					level--;
-					this.life = life;
-					break;
-				case 3:
-					level--;
-					this.life = life;
-					break;
-			}
-		}
 	}
 	
+	@Override
 	public String toString() {
-		return life + " " + this.getClass() + " " + level;
+		return this.life + " " + this.reward + " " + this.getSpeed();
+	}
+	
+	/*
+	 * Getteur et setteur
+	 */
+	public boolean getReached() {
+		return reached;
 	}
 
+	public int getReward() {
+		return reward;
+	}
+		
+	public void setReached(boolean reached) {
+		this.reached = reached;
+	}
+	
+	/*
+	 * Les méthodes abstraites
+	 */
+	protected abstract void setLife(int level);
+	protected abstract void setReward(int level);
+	protected abstract double setSpeed(int level);
 }

@@ -8,9 +8,9 @@ import warcraftTD.util.StdDraw;
 
 public abstract class Missile extends ImageMobile{
 	//cible visée par le projectil
-	public Monster target;
+	private Monster target;
 	//dommages créés par le projectile lorsqu'il atteint la cible
-	public int damage;
+	private int damage;
 	
 	
 	/**
@@ -22,7 +22,7 @@ public abstract class Missile extends ImageMobile{
 	 * @param damage les dommages infligée par le projectile
 	 */
 	public Missile(Position p, Monster target, double speed, String image, int damage) {
-		super(image, p, target.p, speed);
+		super(image, p, target.getP(), speed);
 		this.target = target;
 		this.damage = damage;
 	}
@@ -30,8 +30,9 @@ public abstract class Missile extends ImageMobile{
 	
 	@Override
 	public void draw(double normalizedX, double normalizedY){
-		double angle = super.calculateAngle(this.p, this.nextP);
-		StdDraw.picture(this.p.x, this.p.y, this.image, normalizedX, normalizedY, angle);
+		Position p = this.getP();
+		double angle = super.calculateAngle(p, this.getNextP());
+		StdDraw.picture(p.getX(), p.getY(), this.getImage(), normalizedX, normalizedY, angle);
 	}
 	
 	
@@ -40,6 +41,25 @@ public abstract class Missile extends ImageMobile{
 	 */
 	public void hit() {
 		this.target.takeLifePoint(damage);
+	}
+	
+	public Monster getTarget() {
+		return target;
+	}
+
+
+	public void setTarget(Monster target) {
+		this.target = target;
+	}
+
+
+	public int getDamage() {
+		return damage;
+	}
+
+
+	public void setDamage(int damage) {
+		this.damage = damage;
 	}
 	
 }

@@ -12,7 +12,7 @@ public class Main {
 		int startX = 13;
 		int startY = 14;
 		
-		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY);
+		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY, 10);
 		
 		// Lancement de la boucle principale du jeu
 		w.run();

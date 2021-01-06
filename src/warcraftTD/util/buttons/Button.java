@@ -18,7 +18,7 @@ public abstract class Button {
 	public abstract boolean action();
 	
 	public boolean mouseIn(Position mouse) {
-		return isBetween(mouse.x, p.x, width) && isBetween(mouse.y, p.y, heigth);
+		return isBetween(mouse.getX(), p.getX(), width) && isBetween(mouse.getY(), p.getY(), heigth);
 	}
 	
 	private boolean isBetween(double x, double a, double epsilon) {

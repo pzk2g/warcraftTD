@@ -19,7 +19,7 @@ public class ButtonText extends Button{
 
 	@Override
 	public void draw() {
-		StdDraw.text(p.x, p.y, text);
+		StdDraw.text(p.getX(), p.getY(), text);
 		
 	}
 }
