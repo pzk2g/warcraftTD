@@ -8,16 +8,11 @@ import warcraftTD.util.StdDraw;
 public class ButtonImage extends Button{
 	private String image;
 	
-	public ButtonImage(String image, Position p, double width, double height) {
-		super(p, width, height);
+	public ButtonImage(String image, char action, Position p, double width, double height) {
+		super(p, action, width, height);
 		this.image = image;
 	}
 
-	@Override
-	public boolean action() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public void draw() {
@@ -25,7 +20,6 @@ public class ButtonImage extends Button{
 		if (mouseIn()) {
 			StdDraw.setPenColor(new Color(255, 242, 200, 100));
 			StdDraw.filledRectangle(p.getX(), p.getY(), width/2, heigth/2);
-		}
-		
+		}	
 	}
 }

@@ -7,14 +7,16 @@ public abstract class Button {
 	protected Position p;
 	protected double width;
 	protected double heigth;
+	private char action;
 	
-	public Button(Position p, double width, double height) {
+	public Button(Position p, char action, double width, double height) {
 		this.p = p;
 		this.width = width;
 		this.heigth = height;
+		this.action = action;
 	}
 	
-	public boolean action() {
+	public boolean isClicked() {
 		return StdDraw.isMousePressed() && mouseIn();
 	}
 	
@@ -27,4 +29,8 @@ public abstract class Button {
 	}
 	
 	public abstract void draw();
+	
+	public char getAction() {
+		return action;
+	}
 }

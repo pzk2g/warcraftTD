@@ -1,7 +1,8 @@
 package warcraftTD;
 
 import java.awt.Font;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import warcraftTD.util.Position;
 import warcraftTD.util.StdDraw;
@@ -15,7 +16,8 @@ final public class Menu {
 	private int nbSquareY;
 	private int startX;
 	private int startY;
-	private ArrayList<Button> buttons;
+	private LinkedList<Button> buttons;
+	private Font f;
 	
 	//TODO : javadoc
 	public Menu() {
@@ -28,31 +30,62 @@ final public class Menu {
 
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
-		Font f = new Font("TimesNewRoman", Font.BOLD, 60);
-		buttons = new ArrayList<Button>();
-		buttons.add(new ButtonText("Jouer", new Position(0.5, 0.5), f, width, height));
-		buttons.add(new ButtonText("Règles", new Position(0.5, 0.3), f, width, height));
-		buttons.add(new ButtonText("Quitter", new Position(0.5, 0.1), f, width, height));
+		f = new Font("TimesNewRoman", Font.BOLD, 60);
+		buttons = new LinkedList<Button>();
+		buttons.add(new ButtonText(new Position(0.5, 0.5), "Play", 'p' , f, width, height));
+		buttons.add(new ButtonText(new Position(0.5, 0.3), "Rules", 'r', f, width, height));
+		buttons.add(new ButtonText(new Position(0.5, 0.1), "Exit", 'q', f, width, height));
 		
 	}
 	
-	public void playGame() {
-		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY, 10);
-		w.drawBackground();
-		w.drawPath();
-		StdDraw.show();
-		System.out.println("Press S to start.");
-		System.out.println("Press Q to exit");
-		char c=' ';
-		do {
-			if (StdDraw.hasNextKeyTyped()) {
-				c = StdDraw.nextKeyTyped();
-			}
-		} while (Character.toUpperCase(c)!='S' && Character.toUpperCase(c)!='Q');
-		if (Character.toUpperCase(c)=='S') w.run();
+
+	public char updateButton() {
+		Iterator<Button> ib = buttons.iterator();
+		char c = ' ';
+		while (ib.hasNext()) {
+			Button b = ib.next();
+			if (b.isClicked() && c==' ') c = b.getAction();
+			b.draw();
+		}
+		return c;
 	}
 	
-	public void règles() {
+	public void selected(char c) {
+		switch (c){
+		case 'p':
+			playGame();
+			break;
+		case 'r':
+			rules();
+			break;
+		case 'q':
+			System.exit(0);
+		}
+	}
+	
+	public void playGame() {
+		int nbWaves = 10;
+		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY, nbWaves);
+		LinkedList<Button> lb = new LinkedList<Button>();
+		lb.add(new ButtonText(new Position(0.5, 0.4), "Start", 'j', f, width, height));
+		lb.add(new ButtonText(new Position(0.5, 0.2), "Leave", 'q', f, width, height));
+		char c=' ';
+		do {
+			w.drawBackground();
+			w.drawPath();
+			for (Button b: lb) {
+				if (b.isClicked()) c = b.getAction();
+				b.draw();
+			}
+			StdDraw.setPenColor(StdDraw.BLACK);
+			StdDraw.text(0.5, 0.8, "Have you seen the rules of this game ?");
+			StdDraw.text(0.5, 0.7, "They will be written in the terminal");
+			StdDraw.show();
+		} while (c!='q' && c!='j');
+		if (c=='j') w.run();
+	}
+	
+	public void rules() {
 		
 	}
 	
@@ -64,12 +97,12 @@ final public class Menu {
 	public void run() {
 		boolean quitter = false;
 		while (!quitter) {
-
 			drawBackGround();
-			for (Button b : buttons) b.draw();
+			selected(updateButton());
 			StdDraw.show();
 		}
 	}
+	
 	
 	
 	

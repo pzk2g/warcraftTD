@@ -46,7 +46,7 @@ public class World {
 	int life = 20;
 	
 	//Nombre d'argent du joueur
-	int money = 10000;
+	int money = 100;
 	
 	// Commande sur laquelle le joueur appuie (sur le clavier)
 	char key;
@@ -329,6 +329,7 @@ public class World {
 			System.out.println("Bomb Tower selected (60g).");
 			break;
 		case 'e':
+			if (towers.size()==0) System.out.println("No tower to update");
 			System.out.println("Evolution selected (40g).");
 			break;
 		case 'r':
@@ -403,6 +404,7 @@ public class World {
 		System.out.println("Click on the grass to build it.");
 		System.out.println("Press Z to cancel a selection");
 		System.out.println("Press R to see the reach of a tower");
+		System.out.println("Press Q to exit the current game");
 	}
 	
 	public void controleWaves() {
