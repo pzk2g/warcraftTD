@@ -199,8 +199,8 @@ public class World {
 		double normalizedX = (int)(StdDraw.mouseX() / squareWidth) * squareWidth + squareWidth / 2;
 		double normalizedY = (int)(StdDraw.mouseY() / squareHeight) * squareHeight + squareHeight / 2;
 		Position mouse = new Position(normalizedX, normalizedY);
-		StdDraw.setPenColor(255, 0, 0);
-		StdDraw.setPenRadius(0.005);
+		StdDraw.setPenColor(255, 255, 255);
+		StdDraw.setPenRadius(0.002);
 		
 		//Set des positions où l'on ne peut pas construire de tours
 		TreeSet<Position> positionst = new TreeSet<Position>();
@@ -450,6 +450,7 @@ public class World {
 	
 	/**
 	 * Affiche une image en fin de partie
+	 * @param victory un boolean : vrai si on gagne, faux sinon
 	 */
 	public void end(boolean victory) {
 		String image = "defeat";

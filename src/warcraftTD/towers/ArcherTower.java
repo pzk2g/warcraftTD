@@ -10,7 +10,7 @@ public class ArcherTower extends Tower {
 	public static final String IMAGE = "images/ArcherTowerLevel1.png";
 	public static final int SPEEDRECHARGING = 15;
 	public static final int PRICE = 50;
-	public static final double  REACH = 0.15;
+	public static final double  REACH = 0.12;
 
 	/**
 	 * Classe qui gère les tours d'archers

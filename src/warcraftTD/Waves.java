@@ -44,8 +44,8 @@ public class Waves {
 					m = new Boss(beginMonster, this.levels);
 					break;
 				}
-				int mintimes = 500-15*(waveCounter-1)<=10? 10 : 500-15*(waveCounter-1);
-				this.timesGenerateMonsters = (new Random()).nextInt(mintimes)+mintimes;
+				int mintimes = 500-50*(waveCounter-1)<=5? 5 : 500-50*(waveCounter-1);
+				this.timesGenerateMonsters = mintimes;
 				this.timeMonsters = time;
 				this.nbMonsters--;
 			}

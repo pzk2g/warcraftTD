@@ -11,7 +11,7 @@ public class BombTower extends Tower{
 	public static final String IMAGE = "images/BombTowerLevel1.png";
 	public static final int SPEEDREACHARGING = 20;
 	public static final int PRICE = 60;
-	public static final double  REACH = 0.12;
+	public static final double  REACH = 0.10;
 
 	/**
 	 * Classe des tours de Bombes

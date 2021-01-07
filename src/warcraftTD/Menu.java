@@ -23,10 +23,10 @@ final public class Menu {
 	public Menu() {
 		width = 1200;
 		height = 800;
-		nbSquareX = 15;
-		nbSquareY = 15;
-		startX = 13;
-		startY = 14;
+		nbSquareX = 16;
+		nbSquareY = 16;
+		startX = 14;
+		startY = 15;
 
 		StdDraw.setCanvasSize(width, height);
 		StdDraw.enableDoubleBuffering();
@@ -67,8 +67,9 @@ final public class Menu {
 		int nbWaves = 10;
 		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY, nbWaves);
 		LinkedList<Button> lb = new LinkedList<Button>();
-		lb.add(new ButtonText(new Position(0.5, 0.4), "Start", 'j', f, width, height));
-		lb.add(new ButtonText(new Position(0.5, 0.2), "Leave", 'q', f, width, height));
+		lb.add(new ButtonText(new Position(0.2, 0.55), "Start", 'j', f, width, height));
+		lb.add(new ButtonText(new Position(0.2, 0.45), "Change Path", 'c', f, width, height));
+		lb.add(new ButtonText(new Position(0.2, 0.35), "Leave", 'q', f, width, height));
 		char c=' ';
 		do {
 			w.drawBackground();
@@ -76,6 +77,10 @@ final public class Menu {
 			for (Button b: lb) {
 				if (b.isClicked()) c = b.getAction();
 				b.draw();
+			}
+			if (c=='c') {
+				w.initPath(startX, startY);
+				c = ' ';
 			}
 			StdDraw.setPenColor(StdDraw.BLACK);
 			StdDraw.text(0.5, 0.8, "Have you seen the rules of this game ?");

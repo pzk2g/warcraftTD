@@ -28,13 +28,13 @@ public class Boss extends Monster {
     protected void setLife(int level) {
         switch (level) {
         case 1:
-        	life = 15;
+        	life = 100;
         	break;
         case 2:
-        	life = 25;
+        	life = 150;
         	break;
         case 3:
-        	life = 50;
+        	life = 200;
         	break;
         default:
         	throw new IllegalArgumentException("Level must be between 1 et 3");

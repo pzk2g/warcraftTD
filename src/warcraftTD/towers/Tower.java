@@ -34,7 +34,7 @@ public abstract class Tower {
 	 */
 	public Tower(Position p, String image, int speedReacharging, double reach) {
 		this.p = p;
-		this.speedReacharging = speedReacharging*20;
+		this.speedReacharging = speedReacharging*25;
 		this.setImage(image);
 		this.reach = reach;
 		this.time = System.currentTimeMillis();
