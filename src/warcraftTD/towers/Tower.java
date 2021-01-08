@@ -73,8 +73,9 @@ public abstract class Tower {
 	 */
 	public abstract void updating();
 	
-	//TODO : javadoc
-	public String getImage() {
+	/**
+	 * @return le chemin d'une image 
+	 */	public String getImage() {
 		return image;
 	}
 
