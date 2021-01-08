@@ -13,20 +13,31 @@ public class Boss extends Monster {
         super(IMAGE, p, level>3?3:level);
         this.time = System.currentTimeMillis();
     }
-    //TODO : faire des javadoc
-    @Override
+	
+    /**
+     * Augmente la recompense donnée par le boss éliminé en fonction de son niveau dans une partie
+     * @param level 
+     */    @Override
     protected void setReward(int level) {
         this.reward = 0;
         for (int i=1; i<=level; i++) this.reward +=60;
     }
-
+	
+    /**
+     * Augmente la vitesse du boss en fonction de son niveau dans une partie
+     * @param level 
+     */
     @Override
     protected double setSpeed(int level) {
         double speed = 0.005;
         for (int i=1; i<level; i++) speed+=0.003;
         return speed;
     }
-    
+	
+   /**
+     * Augmente le nombre de point de vie du boss en fonction de son niveau dans une partie
+     * @param level 
+     */ 
     @Override
     protected void setLife(int level) {
         switch (level) {
@@ -43,7 +54,7 @@ public class Boss extends Monster {
         	throw new IllegalArgumentException("Level must be between 1 et 3");
         }
     }
-/**
+    /**
      * Transformation du Boss de monstre volant à monstre de base au cours du jeu
      */
     protected String transform() {
