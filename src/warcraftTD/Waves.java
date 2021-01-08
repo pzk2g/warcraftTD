@@ -77,13 +77,13 @@ public class Waves {
 	}
 
 	public void newWave() {
-		this.boss = this.waveCounter!=0 && this.waveCounter%5==0;
+		this.boss = this.waveCounter!=0 && this.waveCounter%3==0;
 		int nbMonster = this.nbMonster;
 		if (this.boss) nbMonster = 1;
 		this.wave = new Wave(level, nbMonster);
 		if (this.boss) level++;
 		this.waveCounter++;
-		this.nbMonster += this.nbMonster*this.level;
+		this.nbMonster += 3*this.level;
 	}
 	
 	public Monster createMonster(Position beginMonster) {
