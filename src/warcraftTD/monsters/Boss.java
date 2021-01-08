@@ -41,8 +41,8 @@ public class Boss extends Monster {
         }
     }
     
-//    @Override
-//    public void draw(double normalisedX, double normalisedY) {
-//    	//TODO : à faire draw
-//    }
+    @Override
+    public void draw(double normalisedX, double normalisedY) {
+    	//TODO : à faire draw
+    }
 }
