@@ -3,9 +3,12 @@ package warcraftTD.monsters;
 import warcraftTD.util.Position;
 
 public class Boss extends Monster {
-    public static final String IMAGE = "images/Boss.png";
-    protected long time;
-    public char state;
+   public static final String IMAGEFLY = "images/Boss.png";
+	public static final String IMAGEWALK = "images/BossInFire.png";
+	public static final long TRANSFORMTIME = 15000; // Le monstre se transforme au bout de 20 secondes
+	public static String image = IMAGEFLY;
+
+	public char state;
 
     public Boss(Position p, int level) {
         super(IMAGE, p, level>3?3:level);
@@ -40,9 +43,29 @@ public class Boss extends Monster {
         	throw new IllegalArgumentException("Level must be between 1 et 3");
         }
     }
-    
-//    @Override
-//    public void draw(double normalisedX, double normalisedY) {
-//    	//TODO : à faire draw
-//    }
+    /**
+    *transformation du boss à intervalle de temps (TRANSFORMTIME) régulier
+    */
+	protected String transform() {
+		long t = System.currentTimeMillis();
+		if (image.equalsIgnoreCase(IMAGEFLY)) {
+			if (t - this.time > TRANSFORMTIME) {
+				this.state = 'w';
+				image = IMAGEWALK;
+				this.time = t;
+			}
+		}
+		return image;
+	}
+
+	@Override
+	public void draw(double normalizedX, double normalizedY) {
+		StdDraw.picture(getP().getX(), getP().getY(), transform(), normalizedX, normalizedY);
+		long t = System.currentTimeMillis();
+		if (t - this.time > TRANSFORMTIME) {
+			image = IMAGEFLY;
+			this.state = 'f';
+			this.time = t;
+		}
+	}
 }
