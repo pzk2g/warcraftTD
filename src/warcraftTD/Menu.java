@@ -64,7 +64,7 @@ final public class Menu {
 	}
 	
 	public void playGame() {
-		int nbWaves = 10;
+		int nbWaves = 12;
 		World w = new World(width, height, nbSquareX, nbSquareY, startX, startY, nbWaves);
 		LinkedList<Button> lb = new LinkedList<Button>();
 		lb.add(new ButtonText(new Position(0.2, 0.55), "Start", 'j', f, width, height));
