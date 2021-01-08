@@ -56,7 +56,14 @@ public class Waves {
 			return this.nbMonsters<=0;
 		}
 	}
-	//TODO : javadoc
+	/**
+	 * Constructeur
+	 * intialise dans une partie du jeu:
+	 * 			-le nombre de vague
+	 * 			-le nombre de monstre
+	 * 			-le niveau des monstre
+	 * @param le nombre de vague
+	 */
 	// nombre de vagues
 	int nbWaves;
 	// nombre de monstres
