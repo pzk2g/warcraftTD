@@ -37,7 +37,11 @@ public abstract class Monster extends ImageMobile {
 		super.update(normalizedX, normalizedY);
 	}
 	
-	//TODO : faire la javadoc !
+
+	/**
+	 * Savoir si un monstre est éliminé
+	 * @return true si c'est le cas
+	 */
 	public boolean isDead(){
 		return (life==0);
 	}
