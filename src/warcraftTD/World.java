@@ -12,6 +12,9 @@ import warcraftTD.towers.BombTower;
 import warcraftTD.towers.Tower;
 import warcraftTD.util.Position;
 import warcraftTD.util.StdDraw;
+import warcraftTD.util.buttons.Button;
+import warcraftTD.util.buttons.ButtonImage;
+import warcraftTD.util.buttons.ButtonText;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
@@ -23,45 +26,52 @@ import java.util.Random;
 
 public class World {
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
-	LinkedList<Monster> monsters = new LinkedList<Monster>();
+	private LinkedList<Monster> monsters = new LinkedList<Monster>();
 	
 	// l'ensemble des monstres, pour gerer (notamment) l'affichage
-	ArrayList<Tower> towers = new ArrayList <Tower>();
+	private ArrayList<Tower> towers = new ArrayList <Tower>();
 
 	//l'ensemble des missiles, pour gerer (notamment) l'affichage
-	List<Missile> missiles = new LinkedList<Missile>();
+	private List<Missile> missiles = new LinkedList<Missile>();
+	
+	//l'ensemble des boutons
+	private List<Button> buttons;
 	
 	// Position par laquelle les monstres vont venir
-	Position spawn;
+	private Position spawn;
 	
 	// Information sur la taille du plateau de jeu
-	int width;
-	int height;
-	int nbSquareX;
-	int nbSquareY;
-	double squareWidth;
-	double squareHeight;
+	private int nbSquareX;
+	private int nbSquareY;
+	private double squareWidth;
+	private double squareHeight;
 	
 	// Nombre de points de vie du joueur
-	int life = 20;
+	private int life = 20;
 	
 	//Nombre d'argent du joueur
-	int money = 100;
+	private int money = 100;
 	
-	// Commande sur laquelle le joueur appuie (sur le clavier)
-	char key;
+	// Action correspondant au bouton sur lequel le joueur appuie
+	private char action;
 	
 	// Condition pour terminer la partie
-	boolean end = false;
+	private boolean end = false;
 	
 	//Chemin des monstres
-	ArrayList<Position> pathMonsters;
+	private ArrayList<Position> pathMonsters;
 	
 	//Positions des images du chemin
-	Set<Position> path;
+	private Set<Position> path;
 	
 	//Gestion des vagues de monstres
-	Waves waves;
+	private Waves waves;
+	
+	//Font des écritures
+	private Font font;
+	
+	//Message à écrite
+	private String message;
 	
 	
 	/**
@@ -74,14 +84,16 @@ public class World {
 	 * @param startSquareY
 	 */
 	public World(int width, int height, int nbSquareX, int nbSquareY, int startSquareX, int startSquareY, int nbwaves) {
-		this.width = width;
-		this.height = height;
+		StdDraw.setXscale(0, 1.25);
 		this.nbSquareX = nbSquareX;
 		this.nbSquareY = nbSquareY;
 		squareWidth = (double) 1 / nbSquareX;
 		squareHeight = (double) 1 / nbSquareY;
 		spawn = createPosition(startSquareX, startSquareY);
+		message = "";
 		initPath(startSquareX, startSquareY);
+		initButton();
+		font = new Font("TimesNewRoman", Font.BOLD, 20);
 		waves = new Waves(nbwaves);
 		waves.newWave();
 	}
@@ -146,8 +158,18 @@ public class World {
 	private Position createPosition(int x, int y) {
 		return new Position(x * squareWidth + squareWidth / 2, y * squareHeight + squareHeight / 2);
 	}
-
 	
+	private void initButton() {
+		buttons = new LinkedList<Button>();
+		buttons.add(new ButtonImage(new Position(1.03, 0.65), "images/ArcherTowerLevel3.png", 'a', 0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.03, 0.55), "images/BombTowerLevel3.png", 'b',  0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.03, 0.45), "images/up1.png", 'u', 0.02, 0.02));
+		buttons.add(new ButtonImage(new Position(1.03, 0.35), "images/box.png", 'r', 0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.175, 0.025), "images/exit.png", 'e', 0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.025, 0.025), "images/play.png", '>', 0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.075, 0.025), "images/pause.png", '=', 0.05, 0.05));
+		buttons.add(new ButtonImage(new Position(1.125, 0.025), "images/changePath.png", 'p', 0.05, 0.05));
+	}
 	
 	/**
 	 * Définit le décors du plateau de jeu.
@@ -177,18 +199,55 @@ public class World {
 	  */
 	 public void drawInfos() {
 		 //Configuration de la police
-		 StdDraw.setFont(new Font("TimesNewRoman", Font.BOLD, 20));
+		 StdDraw.setFont(font);
 		 StdDraw.setPenColor(StdDraw.BLACK);
 		 //Affichage de l'argent :
 		 StdDraw.setPenRadius(0.01);
-		 StdDraw.picture(0.03, 0.97, "images/gold.png");
-		 StdDraw.text(0.07, 0.97, Integer.toString(money));
+		 StdDraw.picture(1.03, 0.85, "images/gold.png");
+		 StdDraw.text(1.07, 0.85, Integer.toString(money));
 		 //Affichage des vies
-		 StdDraw.picture(0.03, 0.92, "images/heart.png");
-		 StdDraw.text(0.07, 0.92, Integer.toString(life));
+		 StdDraw.picture(1.03, 0.80, "images/heart.png");
+		 StdDraw.text(1.07, 0.80, Integer.toString(life));
 		 //Affichage du numéro de la vague en cours
-		 StdDraw.picture(0.03, 0.87, "images/wave.png");
-		 StdDraw.text(0.07, 0.87, Integer.toString(waves.nbWaves-waves.waveCounter));
+		 StdDraw.picture(1.03, 0.75, "images/wave.png");
+		 StdDraw.text(1.07, 0.75, Integer.toString(waves.nbWaves-waves.waveCounter));
+	 }
+	 
+	 /**
+	  * Affichage des boutons au niveau du menu
+	  */
+	 public void drawButtons() {
+		 for (Button b : buttons)
+			 b.draw();
+	 }
+	 
+	 /**
+	  * Affichage du menu
+	  */
+	 public void drawMenu() {
+		 actionRealized(action);
+		 StdDraw.setPenColor(StdDraw.LIGHT_GREEN);
+		 StdDraw.filledRectangle(1.125, 0.5, 0.125, 0.5);
+		 drawInfos();
+		 drawButtons();
+		 drawMenuText();
+	 }
+	 
+	 
+	 /**
+	  * Affichage du texte du menu
+	  */
+	 public void drawMenuText() {
+		 StdDraw.setPenColor(StdDraw.BLACK);
+		 StdDraw.picture(1.125, 0.95, "images/menu.png", 0.2, 0.07);
+		 StdDraw.text(1.15, 0.65, "Archer Tower (cost 50g)");
+		 StdDraw.text(1.15, 0.55, "Bomb Tower (cost 60g)");
+		 StdDraw.text(1.15, 0.45, "Update Tower (cost 40g)");
+		 StdDraw.text(1.15, 0.35, "Top up a tower");
+		 StdDraw.text(1.13, 0.3, "Cost : 100g (Archer Tower)");
+		 StdDraw.text(1.13, 0.25, "Cost : 50g (Bomb  Tower) ");
+		 StdDraw.text(1.05, 0.17, "Message :");
+		 StdDraw.text(1.125, 0.12, message);
 	 }
 	 
 	 /**
@@ -207,26 +266,24 @@ public class World {
 		for (Tower t : towers) {
 			positionst.add(t.getP());
 		}
-		switch (key) {
+		switch (action) {
 		case 'a' :
-			if (!path.contains(mouse) && !positionst.contains(mouse)) {
+			if (!path.contains(mouse) && !positionst.contains(mouse) && mouse.getX()<=1) {
 				StdDraw.circle(normalizedX, normalizedY, ArcherTower.REACH);
 				StdDraw.picture(normalizedX, normalizedY,  "images/ArcherTowerLevel1.png", squareWidth, squareHeight);
 			}
 			break;
 		case 'b' :
-			if (!path.contains(mouse) && !positionst.contains(mouse)) {
+			if (!path.contains(mouse) && !positionst.contains(mouse) && mouse.getX()<=1) {
 				StdDraw.circle(normalizedX, normalizedY, BombTower.REACH);
 				StdDraw.picture(normalizedX, normalizedY,  "images/BombTowerLevel1.png", squareWidth, squareHeight);
 			}
 			break;
-		case 'e': 
+		case 'u': 
 			//indique par une flèche les tours qui peuvent être évoluées
 			for (Tower t: towers)
 				if (t.getLevel()==1 || t.getLevel()==2)
 					StdDraw.picture(t.getP().getX(), t.getP().getY(), String.format("images/up%d.png", t.getLevel()));
-			break;
-		case 'z' : //on désélectionne
 			break;
 		}
 	 }
@@ -283,7 +340,7 @@ public class World {
 		 }
 	 }
 	 
-	 /*
+	 /**
 	  * Met à jour les projectiles : les faits avancer et les détruits si besoin
 	  */
 	 public void updateMissiles(){
@@ -300,16 +357,28 @@ public class World {
 	 }
 	 
 	 /**
+	  * Met à jour les boutons
+	  */
+	 public void updateButtons() {
+		 Iterator<Button> ib = buttons.iterator();
+		 while (ib.hasNext()) {
+			 Button b = ib.next();
+			 if (b.isClicked()) action = b.getAction();
+		 }
+	 }
+	 
+	 /**
 	  * Met à jour toutes les informations du plateau de jeu ainsi que les déplacements des monstres et les attaques des tours.
 	  * @return les points de vie restants du joueur
 	  */
 	 public int update() {
 		drawBackground();
+		drawMenu();
 		drawPath();
+		updateButtons();
 		updateMonsters();
 		updateTowers();
 		updateMissiles();
-		drawInfos();
 		drawMouse();
 		return life;
 	 }
@@ -318,27 +387,26 @@ public class World {
 	 * Récupère la touche appuyée par l'utilisateur et affiche les informations pour la touche séléctionnée
 	 * @param key la touche utilisée par le joueur
 	 */
-	public void keyPress(char key) {
-		key = Character.toLowerCase(key);
-		this.key = key;
-		switch (key) {
+	public void actionRealized(char action) {
+		action = Character.toLowerCase(action);
+		this.action = action;
+		switch (action) {
 		case 'a':
-			System.out.println("Arrow Tower selected (50g).");
+			message = "Arrow Tower selected";
 			break;
 		case 'b':
-			System.out.println("Bomb Tower selected (60g).");
+			message = "Bomb Tower selected";
 			break;
-		case 'e':
-			if (towers.size()==0) System.out.println("No tower to update");
-			System.out.println("Evolution selected (40g).");
+		case 'u':
+			message = "Evolution selected";
 			break;
 		case 'r':
-			System.out.println("Reach selected");
+			message = "Recharging";
 			break;
 		case 's':
-			System.out.println("Starting game!");
-		case 'q':
-			System.out.println("Exiting.");
+			message = "Starting game!";
+		case 'e':
+			message = "Exiting";
 		}
 	}
 	
@@ -360,51 +428,46 @@ public class World {
 		for (Tower t : towers) {
 			positions.put(t.getP(), t);
 		}
-		switch (key) {
+		switch (action) {
 		case 'a':
-			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
+			if (!path.contains(mouse) && !positions.containsKey(mouse) && mouse.getX()<1) {
 				if (this.money>=ArcherTower.PRICE) {
 					towers.add(new ArcherTower(mouse));
 					this.money-=ArcherTower.PRICE;
 				}
-				else System.out.println("You haven't got enought money!");
+				else message = "You haven't got enought money!";
 			}
 			break;
 		case 'b':
-			if (!path.contains(mouse) && !positions.containsKey(mouse)) {
+			if (!path.contains(mouse) && !positions.containsKey(mouse) && mouse.getX()<1) {
 				if (this.money>=BombTower.PRICE) {
 					towers.add(new BombTower(mouse));
 					this.money-=BombTower.PRICE;
 				}
-				else System.out.println("You haven't got enought money!");
+				else message = "You haven't got enought money!";
 				
 			}
 			break;
-		case 'e':
-			if (positions.containsKey(mouse)) {
+		case 'u':
+			if (positions.containsKey(mouse) && mouse.getX()<1) {
 				Tower t = positions.get(mouse);
 				if (this.money>=Tower.UPDATEPRICE && t.isUpdatable()){
-				t.updating();
-				this.money -= Tower.UPDATEPRICE;
+					t.updating();
+					this.money -= Tower.UPDATEPRICE;
 				}
-				else System.out.println("The tower can't be updated!");
+				else message = "The tower can't be updated!";
 			}
 			break;
+		case 'r':
+			if (positions.containsKey(mouse)) {
+				Tower t = positions.get(mouse);
+				if (this.money>=t.getRechargingPrice()) {
+					t.recharge();
+					this.money -=t.getRechargingPrice();
+				}
+				else message = "You haven't got enought money!";
+			}
 		}
-	}
-	
-	/**
-	 * Comme son nom l'indique, cette fonction permet d'afficher dans le terminal les différentes possibilités 
-	 * offertes au joueur pour intéragir avec le clavier
-	 */
-	public void printCommands() {
-		System.out.println("Press A to select Arrow Tower (cost 50g).");
-		System.out.println("Press B to select Cannon Tower (cost 60g).");
-		System.out.println("Press E to update a tower (cost 40g).");
-		System.out.println("Click on the grass to build it.");
-		System.out.println("Press Z to cancel a selection");
-		System.out.println("Press R to see the reach of a tower");
-		System.out.println("Press Q to exit the current game");
 	}
 	
 	public void controleWaves() {
@@ -416,7 +479,7 @@ public class World {
 			if (waves.endWave() && monsters.size()==0) {
 				waves.newWave();
 			}
-		}	
+		}
 	}
 	
 	
@@ -425,20 +488,14 @@ public class World {
 	 * Récupère la touche entrée au clavier ainsi que la position de la souris et met à jour le plateau en fonction de ces interractions
 	 */
 	public boolean run() {
-		printCommands();
 		while(!end) {	
-			StdDraw.clear();
-			if (StdDraw.hasNextKeyTyped()) {
-				System.out.println();
-				keyPress(StdDraw.nextKeyTyped());
-			}
-			
+			StdDraw.clear();			
 			if (StdDraw.isMousePressed()) {
 				mouseClick(StdDraw.mouseX(), StdDraw.mouseY());
 				StdDraw.pause(50);
 			}
 			controleWaves();
-			end = update()==0 || key=='q'|| (waves.end() && monsters.size()==0);
+			end = update()==0 || action=='e'|| (waves.end() && monsters.size()==0);
 			StdDraw.show();
 			StdDraw.pause(20);
 		}

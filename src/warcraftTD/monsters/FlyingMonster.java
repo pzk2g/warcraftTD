@@ -1,5 +1,7 @@
 package warcraftTD.monsters;
 
+import warcraftTD.towers.ArcherTower;
+import warcraftTD.towers.Tower;
 import warcraftTD.util.Position;
 
 public class FlyingMonster extends Monster {
@@ -38,5 +40,10 @@ public class FlyingMonster extends Monster {
 		for (int i=2; i<=level; i++)
 			speed +=0.002;
 		return speed;
+	}
+	
+	@Override
+	public boolean canBeAttackBy(Tower t) {
+		return t instanceof ArcherTower;
 	}
 }

@@ -1,5 +1,6 @@
 package warcraftTD.monsters;
 
+import warcraftTD.towers.Tower;
 import warcraftTD.util.ImageMobile;
 import warcraftTD.util.Position;
 
@@ -71,6 +72,8 @@ public abstract class Monster extends ImageMobile {
 		this.reached = reached;
 	}
 	
+	
+	public abstract boolean canBeAttackBy(Tower t);
 	/*
 	 * Les méthodes abstraites
 	 */

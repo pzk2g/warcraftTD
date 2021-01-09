@@ -11,25 +11,20 @@ public class ArcherTower extends Tower {
 	public static final int SPEEDRECHARGING = 15;
 	public static final int PRICE = 50;
 	public static final double  REACH = 0.12;
+	private static final int NBMISSILE = 50;
+	private static final int RECHARGINGPRICE = 100;
 
 	/**
 	 * Classe qui gère les tours d'archers
 	 * @param p la position de la tour
 	 */
 	public ArcherTower(Position p) {
-		super(p, IMAGE, SPEEDRECHARGING, REACH);
+		super(p, IMAGE, SPEEDRECHARGING, NBMISSILE, RECHARGINGPRICE, REACH);
 	}
 	
 	@Override
-	public Missile attack(Monster m) {
-		long tps = System.currentTimeMillis();
-		if (tps-this.time>this.speedReacharging) {
-			if (m.getP().dist(this.getP())<=this.reach){
-				this.time = tps;
-				return new Arrow(this.getP().clone(), m);
-			}
-		}
-		return null;
+	public Missile throwMissile(Monster target) {
+		return new Arrow(this.getP().clone(), target);
 	}
 	
 	@Override
@@ -38,5 +33,10 @@ public class ArcherTower extends Tower {
 		this.setImage(String.format("images/ArcherTowerLevel%d.png", this.getLevel()));
 		this.speedReacharging -= (SPEEDRECHARGING/2)*10;
 		this.reach += 0.05;
+	}
+
+	@Override
+	public void recharge() {
+		this.setnBMissile(NBMISSILE);
 	}
 }

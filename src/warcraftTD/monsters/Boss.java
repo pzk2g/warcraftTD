@@ -1,14 +1,21 @@
 package warcraftTD.monsters;
 
+import warcraftTD.towers.ArcherTower;
+import warcraftTD.towers.Tower;
 import warcraftTD.util.Position;
 
 public class Boss extends Monster {
-    public static final String IMAGE = "images/Boss.png";
+    public static final String IMAGEF = "images/Boss.png";
+    public static final String IMAGEW = "images/Bomb.png";
+
+    public Sting image
     protected long time;
     public char state;
 
     public Boss(Position p, int level) {
         super(IMAGE, p, level>3?3:level);
+        this.state = 'f';
+        this.time = System.currentTimeMillis();
     }
     //TODO : faire des javadoc
     @Override
@@ -40,9 +47,18 @@ public class Boss extends Monster {
         	throw new IllegalArgumentException("Level must be between 1 et 3");
         }
     }
+	@Override
+	public boolean canBeAttackBy(Tower t) {
+		return (this.state=='w') || (this.state=='f' && t instanceof ArcherTower);
+	}
     
-//    @Override
-//    public void draw(double normalisedX, double normalisedY) {
-//    	//TODO : à faire draw
-//    }
+    private String transform(){
+            image = IMAGEW;
+            this.state = 'w';
+        return image;
+    }
+    @Override
+    public void draw(double normalisedX, double normalisedY) {
+        StdDraw.picture(getP().getX(), getP().getY(), transform(), normalizedX, normalizedY);
+   }
 }

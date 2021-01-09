@@ -21,7 +21,7 @@ public abstract class Button {
 	}
 	
 	public boolean mouseIn() {
-		return isBetween(StdDraw.mouseX(), p.getX(), width) && isBetween(StdDraw.mouseY(), p.getY(), heigth);
+		return isBetween(StdDraw.mouseX(), p.getX(), width/2) && isBetween(StdDraw.mouseY(), p.getY(), heigth/2);
 	}
 	
 	private boolean isBetween(double x, double a, double epsilon) {

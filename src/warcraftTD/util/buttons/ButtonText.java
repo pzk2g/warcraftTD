@@ -10,7 +10,7 @@ public class ButtonText extends Button{
 	private Font f;
 	
 	public ButtonText(Position p, String text, char action, Font f, double width, double height) {
-		super(p, action, text.length()*f.getSize()/(2*width), f.getSize()/(2*height));
+		super(p, action, text.length()*f.getSize()/(width), f.getSize()/(height));
 		this.text = text;
 		this.f = f;
 	}

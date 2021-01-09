@@ -8,19 +8,22 @@ import warcraftTD.util.StdDraw;
 public abstract class Tower {
 	//position du tour à l'instant t
 	private final Position p;
+	//niveau de la tour
+	private int level;
+	//chemins des tours à afficher
+	private String image;
 	//vitesse d'attaque de la tour
 	protected int speedReacharging;
 	//portée de l'attaque de la tour
 	protected double reach;
 	//vitesse des projectiles
 	protected double speedMissile;
-
-	//chemins des tours à afficher
-	private String image;
 	//temps de rechargement des projectiles
 	protected long time;
-	//niveau de la tour
-	private int level;
+	//nombre de projectiles dans la tour
+	protected int nbMissile;
+	//prix d'un rechargement de projectiles
+	private int rechargingPrice;
 	//prix amélioration d'une tour
 	public final static int UPDATEPRICE = 40;
 
@@ -32,13 +35,15 @@ public abstract class Tower {
 	 * @param price le prix de production de la tour
 	 * @param reach la distance de visée de la tour
 	 */
-	public Tower(Position p, String image, int speedReacharging, double reach) {
+	public Tower(Position p, String image, int speedReacharging, int nbMissiles, int rechargingPrice, double reach) {
 		this.p = p;
 		this.speedReacharging = speedReacharging*25;
 		this.setImage(image);
 		this.reach = reach;
 		this.time = System.currentTimeMillis();
 		this.setLevel(1);
+		this.nbMissile = nbMissiles;
+		this.rechargingPrice = rechargingPrice;
 	}
 	
 	/**
@@ -51,13 +56,33 @@ public abstract class Tower {
 	}
 	
 	/**
-	 * Lance un projectile en direction du monster m
+	 * Attaque le monstre m
 	 * @param m le monstre pris en cible
+	 * @return un projectile en direction du montre
+	 * @note le projectile est celui défini dans throwMissile
 	 */
-	public abstract Missile attack(Monster m);
+	public Missile attack(Monster m) {
+		if (m.canBeAttackBy(this) && this.nbMissile>0) {
+			long tps = System.currentTimeMillis();
+			if (tps-this.time>this.speedReacharging) {
+					if (m.getP().dist(this.getP())<=this.reach){
+						this.time = tps;
+						this.nbMissile--;
+						return throwMissile(m);
+					}
+				}
+		}
+		return null;
+	}
 	
+	/**
+	 * Dessin la tour dans le canevas à l'échelle normalizedX et normalizedY
+	 * @param normalizedX 
+	 * @param normalizedY
+	 */
 	public void draw(double normalizedX, double normalizedY) {
 		StdDraw.picture(p.getX(), p.getY(), image, normalizedX, normalizedY);
+		if (this.nbMissile<=0) StdDraw.picture(p.getX(), p.getY(), "images/noMoreMunitions.png", normalizedX/4, normalizedY/4);
 	}
 	
 	/**
@@ -73,6 +98,21 @@ public abstract class Tower {
 	 */
 	public abstract void updating();
 	
+	/**
+	 * Recharge la tour en munitions
+	 */
+	public abstract void recharge();
+	
+	
+	
+	
+	/**
+	 * Lance un projectile en direction du monstre depuis la position de la tour
+	 * @param m un montre
+	 * @return un projectile en direction du monstre
+	 */
+	protected abstract Missile throwMissile(Monster target);
+
 	//TODO : javadoc
 	public String getImage() {
 		return image;
@@ -94,4 +134,11 @@ public abstract class Tower {
 		return p;
 	}
 	
+	protected void setnBMissile(int nbMissile) {
+		this.nbMissile = nbMissile;
+	}
+
+	public int getRechargingPrice() {
+		return this.rechargingPrice;
+	}
 }

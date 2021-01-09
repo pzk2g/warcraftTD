@@ -1,5 +1,6 @@
 package warcraftTD.monsters;
 
+import warcraftTD.towers.Tower;
 import warcraftTD.util.Position;
 
 
@@ -36,5 +37,10 @@ public class BaseMonster extends Monster {
 		double speed = SPEED;
 		for (int i=2; i<=level; i++) speed += 0.004;
 		return speed;
+	}
+	
+	@Override
+	public boolean canBeAttackBy(Tower t) {
+		return true;
 	}
 }
