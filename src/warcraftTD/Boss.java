@@ -69,11 +69,11 @@ public class Boss extends Monster {
 		long t = System.currentTimeMillis();
 		if (image.equalsIgnoreCase(IMAGEFLY)) {
 			if (t - this.time > TRANSFORMTIME) {
-				this.state = 'w';
 				image = IMAGEWALK;
 				this.time = t;
 			}
 		}
+		if(image.equalsIgnoreCase(IMAGEWALK)) this.state = 'w';
 		return image;
 	}
 
